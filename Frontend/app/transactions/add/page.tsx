@@ -23,7 +23,7 @@ export default function AddTransactionPage() {
   const auth = getAuth()
   const [user, setUser] = useState(auth.currentUser)
   const [loading, setLoading] = useState(true)
-  
+
   const { createTransaction, refresh } = useFinance()
 
   // Form state for single transaction
@@ -33,12 +33,13 @@ export default function AddTransactionPage() {
     transactionMode: '',
     accountNumber: '',
     type: 'credit' as 'credit' | 'debit',
-    description: ''
+    description: '',
+    date: format(new Date(), 'yyyy-MM-dd') // Default to today's date
   })
 
   // Form state for bulk transactions
   const [bulkData, setBulkData] = useState('')
-  
+
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [success, setSuccess] = useState<string | null>(null)
@@ -71,19 +72,24 @@ export default function AddTransactionPage() {
     setSuccess(null)
 
     try {
+      // Convert the selected date to timestamp
+      const selectedDate = new Date(formData.date)
+      const timestamp = selectedDate.getTime()
+
       const transactionData = {
         merchantName: formData.merchantName,
         amount: parseFloat(formData.amount),
         transactionMode: formData.transactionMode || 'Manual Entry',
         accountNumber: formData.accountNumber || '1234567890',
+        timestamp: timestamp,
         ...(formData.description && { description: formData.description })
       }
 
       await createTransaction(transactionData, formData.type)
       await refresh()
-      
+
       setSuccess(`${formData.type === 'credit' ? 'Income' : 'Expense'} transaction added successfully!`)
-      
+
       // Reset form
       setFormData({
         merchantName: '',
@@ -91,7 +97,8 @@ export default function AddTransactionPage() {
         transactionMode: '',
         accountNumber: '',
         type: 'credit',
-        description: ''
+        description: '',
+        date: format(new Date(), 'yyyy-MM-dd')
       })
     } catch (err: any) {
       setError(err.message || 'Failed to add transaction')
@@ -122,7 +129,7 @@ export default function AddTransactionPage() {
         try {
           // Expected format: Type,Merchant,Amount,Mode,Account
           const [type, merchant, amount, mode, account] = line.split(',').map(s => s.trim())
-          
+
           if (!type || !merchant || !amount) {
             errorCount++
             continue
@@ -165,7 +172,7 @@ export default function AddTransactionPage() {
         { merchantName: "Salary - Tech Corp", amount: 50000, transactionMode: "Bank Transfer", accountNumber: "1234567890", type: 'credit' as const },
         { merchantName: "Freelance Project", amount: 15000, transactionMode: "UPI", accountNumber: "1234567890", type: 'credit' as const },
         { merchantName: "Investment Dividend", amount: 2500, transactionMode: "Bank Transfer", accountNumber: "1234567890", type: 'credit' as const },
-        
+
         // Expense transactions
         { merchantName: "Grocery Store", amount: 2500, transactionMode: "UPI", accountNumber: "1234567890", type: 'debit' as const },
         { merchantName: "Fuel Station", amount: 3000, transactionMode: "Card", accountNumber: "1234567890", type: 'debit' as const },
@@ -277,9 +284,9 @@ export default function AddTransactionPage() {
                       <div className="space-y-4">
                         <div>
                           <Label htmlFor="type">Transaction Type *</Label>
-                          <Select 
-                            value={formData.type} 
-                            onValueChange={(value: 'credit' | 'debit') => 
+                          <Select
+                            value={formData.type}
+                            onValueChange={(value: 'credit' | 'debit') =>
                               setFormData(prev => ({ ...prev, type: value }))
                             }
                           >
@@ -316,14 +323,25 @@ export default function AddTransactionPage() {
                             required
                           />
                         </div>
+
+                        <div>
+                          <Label htmlFor="date">Transaction Date *</Label>
+                          <Input
+                            id="date"
+                            type="date"
+                            value={formData.date}
+                            onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                            required
+                          />
+                        </div>
                       </div>
 
                       <div className="space-y-4">
                         <div>
                           <Label htmlFor="transactionMode">Transaction Mode</Label>
-                          <Select 
-                            value={formData.transactionMode} 
-                            onValueChange={(value) => 
+                          <Select
+                            value={formData.transactionMode}
+                            onValueChange={(value) =>
                               setFormData(prev => ({ ...prev, transactionMode: value }))
                             }
                           >
@@ -379,17 +397,18 @@ export default function AddTransactionPage() {
                           </>
                         )}
                       </Button>
-                      
-                      <Button 
-                        type="button" 
-                        variant="outline" 
+
+                      <Button
+                        type="button"
+                        variant="outline"
                         onClick={() => setFormData({
                           merchantName: '',
                           amount: '',
                           transactionMode: '',
                           accountNumber: '',
                           type: 'credit',
-                          description: ''
+                          description: '',
+                          date: format(new Date(), 'yyyy-MM-dd')
                         })}
                       >
                         <RotateCcw className="mr-2 h-4 w-4" />

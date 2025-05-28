@@ -44,7 +44,7 @@ function IncomeListComponent({ transactions }: IncomeListProps) {
               </p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span>{transaction.transactionMode || 'Unknown'}</span>
-                {transaction.accountNumber && (
+                {transaction.accountNumber && typeof transaction.accountNumber === 'string' && transaction.accountNumber.length >= 4 && (
                   <>
                     <span>•</span>
                     <span>A/C: ****{transaction.accountNumber.slice(-4)}</span>
@@ -55,9 +55,9 @@ function IncomeListComponent({ transactions }: IncomeListProps) {
           </div>
           <div className="text-right">
             <p className="font-semibold text-emerald-600 dark:text-emerald-400">
-              +₹{transaction.amount.toLocaleString('en-IN', { 
+              +₹{transaction.amount.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2 
+                maximumFractionDigits: 2
               })}
             </p>
             <p className="text-xs text-muted-foreground">
@@ -66,7 +66,7 @@ function IncomeListComponent({ transactions }: IncomeListProps) {
           </div>
         </div>
       ))}
-      
+
       {transactions.length > 10 && (
         <div className="text-center pt-4">
           <p className="text-sm text-muted-foreground">

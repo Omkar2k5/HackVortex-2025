@@ -44,7 +44,7 @@ function ExpenseListComponent({ transactions }: ExpenseListProps) {
               </p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span>{transaction.transactionMode || 'Unknown'}</span>
-                {transaction.accountNumber && (
+                {transaction.accountNumber && typeof transaction.accountNumber === 'string' && transaction.accountNumber.length >= 4 && (
                   <>
                     <span>•</span>
                     <span>A/C: ****{transaction.accountNumber.slice(-4)}</span>

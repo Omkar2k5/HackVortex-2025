@@ -146,14 +146,14 @@ export const deleteBudget = async (budgetId: string) => {
 
 // Transaction Operations
 export const addTransaction = async (
-  transaction: Omit<Transaction, 'id' | 'timestamp'>,
+  transaction: Omit<Transaction, 'id'> | Omit<Transaction, 'id' | 'timestamp'>,
   type: 'credit' | 'debit'
 ) => {
   try {
     const newTransactionRef = push(getUserRef(`/${type}`));
     const newTransaction = {
       ...transaction,
-      timestamp: Date.now()
+      timestamp: 'timestamp' in transaction ? transaction.timestamp : Date.now()
     };
     await set(newTransactionRef, newTransaction);
     return { id: newTransactionRef.key };

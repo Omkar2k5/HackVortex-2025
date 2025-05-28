@@ -470,7 +470,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t text-center">
-            <p className="text-sm md:text-base text-gray-600">© 2024 FinanceBuddy. Built with ❤️ by Mrunal Thamake</p>
+            <p className="text-sm md:text-base text-gray-600">© 2024 FinanceBuddy. Built with ❤️ Omkar GOndkar</p>
           </div>
         </div>
       </footer>

@@ -170,7 +170,7 @@ export const useFinance = () => {
 
   // Transaction operations
   const createTransaction = async (
-    transaction: Omit<Transaction, 'id' | 'timestamp'>,
+    transaction: Omit<Transaction, 'id'> | Omit<Transaction, 'id' | 'timestamp'>,
     type: 'credit' | 'debit'
   ) => {
     if (!user || !auth) throw new Error('No user logged in');
