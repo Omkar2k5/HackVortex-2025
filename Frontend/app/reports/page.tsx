@@ -1,65 +1,45 @@
 "use client"
 
 import Link from "next/link"
-import { IndianRupee, Download, Filter, Calendar } from "lucide-react"
-import { useEffect, useState, useRef } from "react"
+import Image from "next/image"
+import { IndianRupee, Download, TrendingUp, TrendingDown, DollarSign, FileText, RefreshCw } from "lucide-react"
+import { useEffect, useState } from "react"
 import { format, isWithinInterval, startOfDay, endOfDay, subDays, subWeeks, subMonths, startOfMonth, endOfMonth } from "date-fns"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "next/navigation"
 import dynamic from 'next/dynamic'
-import Image from "next/image"
 import { DateRange } from 'react-day-picker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { DashboardNav } from "@/components/dashboard-nav"
-import { DashboardChart } from "@/components/dashboard-chart"
-import ExpensePieChart from "@/components/expense-pie-chart"
 import { useFinance } from "@/hooks/useFinance"
 import { Transaction, MerchantExpense } from "@/types/finance"
-
-// Import types from types directory
-import type { PDFViewerProps } from '@/types/pdf-viewer'
-import type { DateRangePickerProps } from '@/types/date-range-picker'
-import type { FinancialReportPDFProps } from '@/types/financial-report'
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  LineChart,
+  Line,
+  AreaChart,
+  Area
+} from 'recharts'
 
 // Dynamic imports with type safety and loading states
-const DateRangePicker = dynamic<DateRangePickerProps>(
+const DateRangePicker = dynamic(
   () => import('@/components/ui/date-range-picker').then(mod => mod.DateRangePicker),
   {
     ssr: false,
     loading: () => <div className="flex items-center justify-center p-4">
       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
     </div>
-  }
-)
-
-const PDFViewer = dynamic<PDFViewerProps>(
-  () => import('@/components/pdf-viewer').then(mod => mod.PDFViewer),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex items-center justify-center h-[80vh] border rounded-lg bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-          <p className="text-sm text-muted-foreground">Loading PDF Viewer...</p>
-        </div>
-      </div>
-    )
-  }
-)
-
-const FinancialReportPDF = dynamic<FinancialReportPDFProps>(
-  () => import('@/components/financial-report-pdf').then(mod => mod.FinancialReportPDF),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
-          <p className="text-sm text-muted-foreground">Generating Report...</p>
-        </div>
-      </div>
-    )
   }
 )
 
@@ -76,6 +56,31 @@ interface ReportDateRange {
   to: Date
 }
 
+// Chart colors
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C']
+
+// PDF generation function using html-to-image
+const generatePDF = async (elementId: string, filename: string) => {
+  try {
+    const { default: html2canvas } = await import('html-to-image')
+    const element = document.getElementById(elementId)
+    if (!element) return
+
+    const dataUrl = await html2canvas.toPng(element, {
+      quality: 0.95,
+      backgroundColor: '#ffffff'
+    })
+
+    // Create download link
+    const link = document.createElement('a')
+    link.download = filename
+    link.href = dataUrl
+    link.click()
+  } catch (error) {
+    console.error('Error generating PDF:', error)
+  }
+}
+
 export default function ReportsPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
@@ -90,17 +95,9 @@ export default function ReportsPage() {
     refresh
   } = useFinance()
 
-  const [selectedPreset, setSelectedPreset] = useState<string>("Last 30 Days")
-  const [incomeData, setIncomeData] = useState<MerchantExpense[]>([])
-  const [expenseData, setExpenseData] = useState<MerchantExpense[]>([])
-  const [totalIncome, setTotalIncome] = useState(0)
-  const [incomeChange, setIncomeChange] = useState(0)
-  const incomePieRef = useRef<HTMLDivElement>(null)
-  const expensePieRef = useRef<HTMLDivElement>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [creditTransactions, setCreditTransactions] = useState<Transaction[]>([])
-  const [debitTransactions, setDebitTransactions] = useState<Transaction[]>([])
+  const [filteredCredits, setFilteredCredits] = useState<Transaction[]>([])
+  const [filteredDebits, setFilteredDebits] = useState<Transaction[]>([])
+  const [reportData, setReportData] = useState<any>(null)
 
   useEffect(() => {
     const auth = getAuth()
@@ -119,82 +116,97 @@ export default function ReportsPage() {
   // Process transactions when data or date range changes
   useEffect(() => {
     if (credits && debits) {
-      // Filter transactions by date range
-      const filteredCredits = credits.filter(tx => {
-        const txDate = new Date(tx.timestamp)
-        return isWithinInterval(txDate, {
-          start: startOfDay(dateRange?.from || new Date()),
-          end: endOfDay(dateRange?.to || new Date())
+      let filteredCreditsData = credits
+      let filteredDebitsData = debits
+
+      // Filter by date range if provided
+      if (dateRange?.from && dateRange?.to) {
+        filteredCreditsData = credits.filter(tx => {
+          const txDate = new Date(tx.timestamp)
+          return isWithinInterval(txDate, {
+            start: startOfDay(dateRange.from!),
+            end: endOfDay(dateRange.to!)
+          })
         })
-      })
 
-      const filteredDebits = debits.filter(tx => {
-        const txDate = new Date(tx.timestamp)
-        return isWithinInterval(txDate, {
-          start: startOfDay(dateRange?.from || new Date()),
-          end: endOfDay(dateRange?.to || new Date())
+        filteredDebitsData = debits.filter(tx => {
+          const txDate = new Date(tx.timestamp)
+          return isWithinInterval(txDate, {
+            start: startOfDay(dateRange.from!),
+            end: endOfDay(dateRange.to!)
+          })
         })
-      })
+      }
 
-      // Calculate total income and income change
-      const total = filteredCredits.reduce((sum, tx) => sum + tx.amount, 0)
-      setTotalIncome(total)
+      setFilteredCredits(filteredCreditsData)
+      setFilteredDebits(filteredDebitsData)
 
-      // Calculate month-over-month change
-      const currentMonth = new Date().getMonth()
-      const currentMonthCredits = filteredCredits.filter(tx =>
-        new Date(tx.timestamp).getMonth() === currentMonth
-      )
-      const lastMonthCredits = filteredCredits.filter(tx =>
-        new Date(tx.timestamp).getMonth() === currentMonth - 1
-      )
+      // Generate comprehensive report data
+      const totalIncome = filteredCreditsData.reduce((sum, tx) => sum + tx.amount, 0)
+      const totalExpenses = filteredDebitsData.reduce((sum, tx) => sum + tx.amount, 0)
+      const netIncome = totalIncome - totalExpenses
 
-      const currentMonthTotal = currentMonthCredits.reduce((sum, tx) => sum + tx.amount, 0)
-      const lastMonthTotal = lastMonthCredits.reduce((sum, tx) => sum + tx.amount, 0)
-
-      const change = lastMonthTotal > 0
-        ? ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100
-        : 0
-      setIncomeChange(Number(change.toFixed(1)))
-
-      // Calculate income by source
-      const incomeBySource = filteredCredits.reduce((acc, tx) => {
-        const merchant = tx.merchantName
-        acc[merchant] = (acc[merchant] || 0) + tx.amount
+      // Top income sources
+      const incomeBySource = filteredCreditsData.reduce((acc, tx) => {
+        acc[tx.merchantName] = (acc[tx.merchantName] || 0) + tx.amount
         return acc
       }, {} as Record<string, number>)
 
-      const incomeDataArray = Object.entries(incomeBySource)
-        .map(([merchant, amount]) => ({ merchant, amount }))
+      const topIncomeSources = Object.entries(incomeBySource)
+        .map(([name, amount]) => ({ name, amount }))
         .sort((a, b) => b.amount - a.amount)
-        .slice(0, 5) // Top 5 sources
+        .slice(0, 10)
 
-      setIncomeData(incomeDataArray)
-
-      // Calculate expenses by category
-      const expensesByCategory = filteredDebits.reduce((acc, tx) => {
-        const merchant = tx.merchantName
-        acc[merchant] = (acc[merchant] || 0) + tx.amount
+      // Top expense categories
+      const expensesByCategory = filteredDebitsData.reduce((acc, tx) => {
+        acc[tx.merchantName] = (acc[tx.merchantName] || 0) + tx.amount
         return acc
       }, {} as Record<string, number>)
 
-      const expenseDataArray = Object.entries(expensesByCategory)
-        .map(([merchant, amount]) => ({ merchant, amount }))
+      const topExpenseCategories = Object.entries(expensesByCategory)
+        .map(([name, amount]) => ({ name, amount }))
         .sort((a, b) => b.amount - a.amount)
-        .slice(0, 5) // Top 5 categories
+        .slice(0, 10)
 
-      setExpenseData(expenseDataArray)
+      // Monthly trend data
+      const monthlyData = new Map<string, { income: number; expenses: number }>()
+
+      filteredCreditsData.forEach(tx => {
+        const month = format(new Date(tx.timestamp), 'MMM yyyy')
+        if (!monthlyData.has(month)) {
+          monthlyData.set(month, { income: 0, expenses: 0 })
+        }
+        monthlyData.get(month)!.income += tx.amount
+      })
+
+      filteredDebitsData.forEach(tx => {
+        const month = format(new Date(tx.timestamp), 'MMM yyyy')
+        if (!monthlyData.has(month)) {
+          monthlyData.set(month, { income: 0, expenses: 0 })
+        }
+        monthlyData.get(month)!.expenses += tx.amount
+      })
+
+      const monthlyTrend = Array.from(monthlyData.entries())
+        .map(([month, data]) => ({
+          month,
+          income: data.income,
+          expenses: data.expenses,
+          net: data.income - data.expenses
+        }))
+        .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime())
+
+      setReportData({
+        totalIncome,
+        totalExpenses,
+        netIncome,
+        topIncomeSources,
+        topExpenseCategories,
+        monthlyTrend,
+        transactionCount: filteredCreditsData.length + filteredDebitsData.length
+      })
     }
   }, [credits, debits, dateRange])
-
-  // Handle preset selection
-  const handlePresetSelect = (preset: string) => {
-    setSelectedPreset(preset)
-    const selectedRange = PRESET_RANGES.find(range => range.label === preset)
-    if (selectedRange && selectedRange.getRange) {
-      setDateRange(selectedRange.getRange())
-    }
-  }
 
   // Handle refresh
   const handleRefresh = () => {
@@ -202,18 +214,11 @@ export default function ReportsPage() {
     refresh()
   }
 
-  // Convert DateRange to ReportDateRange
-  const getValidDateRange = (range: DateRange | undefined): ReportDateRange | null => {
-    if (!range?.from || !range?.to) return null;
-    return {
-      from: range.from,
-      to: range.to
-    };
-  };
-
-  // Only render PDF if we have a complete date range
-  const validDateRange = dateRange ? getValidDateRange(dateRange) : null;
-  const canRenderPDF = credits && debits && summary && validDateRange;
+  // Handle PDF download
+  const handleDownloadPDF = () => {
+    const filename = `financial-report-${format(new Date(), 'yyyy-MM-dd')}.png`
+    generatePDF('report-content', filename)
+  }
 
   if (isLoading || dataLoading) {
     return (
@@ -242,24 +247,21 @@ export default function ReportsPage() {
       <div className="border-b">
         <div className="flex h-16 items-center px-4">
           <Link href="/home" className="flex items-center gap-2">
-            <Image
-              src="/images/finance-logo.png"
-              alt="FinanceBuddy Logo"
-              width={40}
-              height={40}
-              className="object-contain"
-              priority
-            />
+            <IndianRupee className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">FinanceBuddy</span>
           </Link>
           <div className="ml-auto flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={handleRefresh}>
-              <Download className="h-5 w-5" />
+              <RefreshCw className="h-5 w-5" />
               <span className="sr-only">Refresh</span>
+            </Button>
+            <Button variant="outline" onClick={handleDownloadPDF}>
+              <Download className="mr-2 h-4 w-4" />
+              Download PDF
             </Button>
             <Button variant="ghost" size="sm" className="gap-2">
               {user?.photoURL ? (
-                <img
+                <Image
                   src={user.photoURL}
                   width={32}
                   height={32}
@@ -284,41 +286,230 @@ export default function ReportsPage() {
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">Financial Reports</h1>
-              <p className="text-muted-foreground">Generate and download detailed financial reports</p>
+              <p className="text-muted-foreground">Comprehensive analysis of your financial transactions</p>
             </div>
           </div>
 
+          {/* Date Range Selector */}
           <Card>
             <CardHeader>
-              <CardTitle>Generate Report</CardTitle>
-              <CardDescription>Select a date range and generate a detailed financial report</CardDescription>
+              <CardTitle>Report Period</CardTitle>
+              <CardDescription>Select a date range to filter your financial data</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
               <DateRangePicker
                 value={dateRange}
                 onChange={(range: DateRange | undefined) => setDateRange(range)}
               />
-
-              {canRenderPDF && (
-                <PDFViewer>
-                  <FinancialReportPDF
-                    dateRange={validDateRange!}
-                    totalIncome={summary.totalCredit}
-                    incomeChange={(summary.totalCredit - summary.totalDebit) / summary.totalDebit * 100}
-                    creditTransactions={credits}
-                    incomeData={credits.map(tx => ({
-                      name: tx.merchantName,
-                      value: tx.amount
-                    }))}
-                    expenseData={debits.map(tx => ({
-                      name: tx.merchantName,
-                      value: tx.amount
-                    }))}
-                  />
-                </PDFViewer>
-              )}
             </CardContent>
           </Card>
+
+          {reportData && (
+            <div id="report-content" className="space-y-6">
+              {/* Summary Cards */}
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total Income</CardTitle>
+                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-green-600">
+                      ₹{reportData.totalIncome.toLocaleString('en-IN')}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      From {filteredCredits.length} transactions
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
+                    <TrendingDown className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-red-600">
+                      ₹{reportData.totalExpenses.toLocaleString('en-IN')}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      From {filteredDebits.length} transactions
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Net Income</CardTitle>
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className={`text-2xl font-bold ${reportData.netIncome >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      ₹{reportData.netIncome.toLocaleString('en-IN')}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {reportData.netIncome >= 0 ? 'Surplus' : 'Deficit'}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Transactions</CardTitle>
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {reportData.transactionCount}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Total transactions
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Charts Section */}
+              <div className="grid gap-6 md:grid-cols-2">
+                {/* Monthly Trend Chart */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Monthly Trend</CardTitle>
+                    <CardDescription>Income vs Expenses over time</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={reportData.monthlyTrend}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip formatter={(value: number) => `₹${value.toLocaleString('en-IN')}`} />
+                          <Legend />
+                          <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2} name="Income" />
+                          <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} name="Expenses" />
+                          <Line type="monotone" dataKey="net" stroke="#3b82f6" strokeWidth={2} name="Net" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Income Sources Pie Chart */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Top Income Sources</CardTitle>
+                    <CardDescription>Breakdown of income by source</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={reportData.topIncomeSources.slice(0, 8)}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="amount"
+                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          >
+                            {reportData.topIncomeSources.slice(0, 8).map((entry: any, index: number) => (
+                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip formatter={(value: number) => `₹${value.toLocaleString('en-IN')}`} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Expense Categories Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Top Expense Categories</CardTitle>
+                  <CardDescription>Your highest spending categories</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[400px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={reportData.topExpenseCategories.slice(0, 10)}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
+                        <YAxis />
+                        <Tooltip formatter={(value: number) => `₹${value.toLocaleString('en-IN')}`} />
+                        <Bar dataKey="amount" fill="#ef4444" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Income vs Expenses Area Chart */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Income vs Expenses Comparison</CardTitle>
+                  <CardDescription>Cumulative view of your financial flow</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[400px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={reportData.monthlyTrend}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip formatter={(value: number) => `₹${value.toLocaleString('en-IN')}`} />
+                        <Legend />
+                        <Area type="monotone" dataKey="income" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.6} name="Income" />
+                        <Area type="monotone" dataKey="expenses" stackId="2" stroke="#ef4444" fill="#ef4444" fillOpacity={0.6} name="Expenses" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Transaction Summary Tables */}
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Top Income Sources</CardTitle>
+                    <CardDescription>Detailed breakdown of income sources</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {reportData.topIncomeSources.slice(0, 10).map((source: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-green-50">
+                          <span className="font-medium">{source.name}</span>
+                          <span className="text-green-600 font-semibold">
+                            ₹{source.amount.toLocaleString('en-IN')}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Top Expense Categories</CardTitle>
+                    <CardDescription>Detailed breakdown of expense categories</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {reportData.topExpenseCategories.slice(0, 10).map((category: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between p-2 rounded-lg bg-red-50">
+                          <span className="font-medium">{category.name}</span>
+                          <span className="text-red-600 font-semibold">
+                            ₹{category.amount.toLocaleString('en-IN')}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>
