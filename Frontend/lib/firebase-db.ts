@@ -1,7 +1,15 @@
 import { getDatabase, ref, set, get, push, remove, update } from "firebase/database";
 import { getAuth } from "firebase/auth";
+import { database } from "./firebase";
 
-const db = getDatabase();
+// Helper function to get database instance
+const getDB = () => {
+  if (typeof window === 'undefined') {
+    // Return null during SSR
+    return null;
+  }
+  return database || getDatabase();
+};
 
 // Types
 export interface Budget {
@@ -30,6 +38,9 @@ export interface Transaction {
 
 // Helper function to get current user's reference
 const getUserRef = (path: string = '') => {
+  const db = getDB();
+  if (!db) throw new Error('Database not available during SSR');
+
   const auth = getAuth();
   const user = auth.currentUser;
   if (!user) throw new Error('No user logged in');
@@ -38,6 +49,9 @@ const getUserRef = (path: string = '') => {
 
 // Initialize new user's data structure
 export const initializeUserData = async () => {
+  const db = getDB();
+  if (!db) throw new Error('Database not available during SSR');
+
   const auth = getAuth();
   const user = auth.currentUser;
   if (!user) throw new Error('No user logged in');
@@ -125,7 +139,7 @@ export const deleteBudget = async (budgetId: string) => {
 
 // Transaction Operations
 export const addTransaction = async (
-  transaction: Omit<Transaction, 'id' | 'timestamp'>, 
+  transaction: Omit<Transaction, 'id' | 'timestamp'>,
   type: 'credit' | 'debit'
 ) => {
   try {
@@ -158,7 +172,7 @@ export const getTransactions = async (type: 'credit' | 'debit'): Promise<Transac
 };
 
 export const updateTransaction = async (
-  transactionId: string, 
+  transactionId: string,
   type: 'credit' | 'debit',
   updates: Partial<Transaction>
 ) => {
@@ -212,4 +226,4 @@ export const getUserSummary = async () => {
     console.error('Failed to fetch user summary:', error);
     throw new Error(`Failed to fetch user summary: ${error.message}`);
   }
-}; 
+};

@@ -30,7 +30,10 @@ interface FinanceSummary {
 }
 
 export const useFinance = () => {
-  const auth = getAuth();
+  // SSR protection
+  const [isClient, setIsClient] = useState(false);
+
+  const auth = typeof window !== 'undefined' ? getAuth() : null;
   const user = auth?.currentUser;
 
   const [loading, setLoading] = useState(true);
@@ -51,9 +54,14 @@ export const useFinance = () => {
     }
   };
 
+  // Client-side effect
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Load all data with memoization
   const loadData = useCallback(async () => {
-    if (!user || !auth) {
+    if (!isClient || !user || !auth) {
       setLoading(false);
       return;
     }
@@ -82,7 +90,7 @@ export const useFinance = () => {
     } finally {
       setLoading(false);
     }
-  }, [user, auth]);
+  }, [isClient, user, auth]);
 
   // Initialize user data and load data when user changes
   useEffect(() => {
