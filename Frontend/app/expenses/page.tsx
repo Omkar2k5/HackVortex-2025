@@ -4,7 +4,7 @@ import Link from "next/link"
 import dynamic from "next/dynamic"
 import { DollarSign, HelpCircle, Loader2 } from "lucide-react"
 import Image from "next/image"
-import { useEffect, useState, Suspense } from "react"
+import { useEffect, useState, Suspense, useCallback } from "react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "next/navigation"
 
@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useFinance } from "@/hooks/useFinance"
 import { Transaction } from "@/types/finance"
 import { LoadingSkeleton } from "@/components/loading-skeleton"
+import { TransactionDateFilter } from "@/components/transaction-date-filter"
 
 // Lazy load heavy components
 const DashboardNav = dynamic(
@@ -53,6 +54,7 @@ export default function ExpensesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [expenses, setExpenses] = useState<Transaction[]>([])
+  const [filteredExpenses, setFilteredExpenses] = useState<Transaction[]>([])
 
   // Handle authentication state
   useEffect(() => {
@@ -76,8 +78,14 @@ export default function ExpensesPage() {
         type: 'debit' as const
       }))
       setExpenses(transformedDebits)
+      setFilteredExpenses(transformedDebits) // Initialize filtered expenses
     }
   }, [debits])
+
+  // Handle date filter changes
+  const handleFilterChange = useCallback((filtered: Transaction[]) => {
+    setFilteredExpenses(filtered)
+  }, [])
 
   // Handle refresh
   const handleRefresh = () => {
@@ -160,6 +168,12 @@ export default function ExpensesPage() {
             </div>
           </div>
 
+          {/* Date Filter */}
+          <TransactionDateFilter
+            transactions={expenses}
+            onFilterChange={handleFilterChange}
+          />
+
           <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
             <div className="space-y-4">
               <Card>
@@ -168,7 +182,7 @@ export default function ExpensesPage() {
                   <CardDescription>Your latest expense transactions</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ExpenseList transactions={expenses} />
+                  <ExpenseList transactions={filteredExpenses} />
                 </CardContent>
               </Card>
             </div>
@@ -180,7 +194,7 @@ export default function ExpensesPage() {
                   <CardDescription>Your spending by category</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ExpenseCategories transactions={expenses} />
+                  <ExpenseCategories transactions={filteredExpenses} />
                 </CardContent>
               </Card>
             </div>

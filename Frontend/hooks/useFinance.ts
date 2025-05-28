@@ -32,9 +32,9 @@ interface FinanceSummary {
 export const useFinance = () => {
   // SSR protection
   const [isClient, setIsClient] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   const auth = typeof window !== 'undefined' ? getAuth() : null;
-  const user = auth?.currentUser;
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,14 +54,25 @@ export const useFinance = () => {
     }
   };
 
-  // Client-side effect
+  // Client-side effect and auth state listener
   useEffect(() => {
     setIsClient(true);
-  }, []);
+
+    if (!auth) return;
+
+    // Listen for auth state changes
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      console.log('Auth state changed:', currentUser?.uid);
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
+  }, [auth]);
 
   // Load all data with memoization
   const loadData = useCallback(async () => {
     if (!isClient || !user || !auth) {
+      console.log('Cannot load data - missing requirements:', { isClient, user: !!user, auth: !!auth });
       setLoading(false);
       return;
     }
@@ -69,6 +80,7 @@ export const useFinance = () => {
     try {
       setLoading(true);
       setError(null);
+      console.log('Loading data for user:', user.uid);
 
       // First ensure user data is initialized
       await initializeUser();
@@ -79,6 +91,13 @@ export const useFinance = () => {
         getTransactions('debit'),
         getUserSummary()
       ]);
+
+      console.log('Data loaded successfully:', {
+        budgets: budgetsData.length,
+        credits: creditsData.length,
+        debits: debitsData.length,
+        summary: !!summaryData
+      });
 
       setBudgets(budgetsData);
       setCredits(creditsData);
@@ -95,9 +114,11 @@ export const useFinance = () => {
   // Initialize user data and load data when user changes
   useEffect(() => {
     const handleUserData = async () => {
-      if (user && auth) {
+      if (user && auth && isClient) {
+        console.log('User authenticated, loading data...');
         await loadData();
       } else {
+        console.log('User not authenticated or client not ready, clearing data...');
         // Clear data when user logs out
         setBudgets([]);
         setCredits([]);
@@ -108,7 +129,7 @@ export const useFinance = () => {
     };
 
     handleUserData();
-  }, [user]);
+  }, [user, isClient, loadData]);
 
   // Budget operations
   const createBudget = async (budget: Omit<Budget, 'id' | 'budgetReached' | 'createdAt' | 'isActive' | 'spent'>) => {

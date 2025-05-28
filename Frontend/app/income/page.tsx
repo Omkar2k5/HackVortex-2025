@@ -4,7 +4,7 @@ import Link from "next/link"
 import dynamic from "next/dynamic"
 import { TrendingUp, HelpCircle, Loader2 } from "lucide-react"
 import Image from "next/image"
-import { useEffect, useState, Suspense } from "react"
+import { useEffect, useState, Suspense, useCallback } from "react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "next/navigation"
 
@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useFinance } from "@/hooks/useFinance"
 import { Transaction } from "@/types/finance"
 import { LoadingSkeleton } from "@/components/loading-skeleton"
+import { TransactionDateFilter } from "@/components/transaction-date-filter"
 
 // Lazy load heavy components
 const DashboardNav = dynamic(
@@ -53,6 +54,7 @@ export default function IncomePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [income, setIncome] = useState<Transaction[]>([])
+  const [filteredIncome, setFilteredIncome] = useState<Transaction[]>([])
 
   // Handle authentication state
   useEffect(() => {
@@ -77,8 +79,17 @@ export default function IncomePage() {
         type: 'credit' as const
       }))
       setIncome(incomeTransactions)
+      setFilteredIncome(incomeTransactions) // Initialize filtered income
+    } else {
+      setIncome([])
+      setFilteredIncome([])
     }
   }, [credits])
+
+  // Handle date filter changes
+  const handleFilterChange = useCallback((filtered: Transaction[]) => {
+    setFilteredIncome(filtered)
+  }, [])
 
   // Add a refresh button to manually trigger data fetch
   const handleRefresh = () => {
@@ -114,11 +125,11 @@ export default function IncomePage() {
         <div className="flex h-16 items-center px-4">
           <div className="flex items-center gap-2">
             <Link href="/home" className="flex items-center gap-2">
-              <Image 
-                src="/images/finance-logo.png" 
-                alt="FinanceBuddy Logo" 
-                width={40} 
-                height={40} 
+              <Image
+                src="/images/finance-logo.png"
+                alt="FinanceBuddy Logo"
+                width={40}
+                height={40}
                 className="object-contain"
                 priority
               />
@@ -161,6 +172,12 @@ export default function IncomePage() {
             </div>
           </div>
 
+          {/* Date Filter */}
+          <TransactionDateFilter
+            transactions={income}
+            onFilterChange={handleFilterChange}
+          />
+
           <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
             <div className="space-y-4">
               <Card>
@@ -169,7 +186,7 @@ export default function IncomePage() {
                   <CardDescription>Your latest income transactions</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <IncomeList transactions={income} />
+                  <IncomeList transactions={filteredIncome} />
                 </CardContent>
               </Card>
             </div>
@@ -181,7 +198,7 @@ export default function IncomePage() {
                   <CardDescription>Your income by source</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <IncomeCategories transactions={income} />
+                  <IncomeCategories transactions={filteredIncome} />
                 </CardContent>
               </Card>
             </div>

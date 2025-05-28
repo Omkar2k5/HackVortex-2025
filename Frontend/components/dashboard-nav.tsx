@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BarChart3, CreditCard, Home, LineChart, PiggyBank, User, TrendingUp, Upload, ArrowUpRight } from "lucide-react"
+import { BarChart3, CreditCard, Home, LineChart, PiggyBank, User, TrendingUp, Upload, ArrowUpRight, Plus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -40,6 +40,11 @@ export function DashboardNav({ className, ...props }: DashboardNavProps) {
       title: "Portfolio",
       href: "/portfolio",
       icon: TrendingUp,
+    },
+    {
+      title: "Add Transactions",
+      href: "/transactions/add",
+      icon: Plus,
     },
     {
       title: "Update Transactions",

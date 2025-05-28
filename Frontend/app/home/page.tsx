@@ -3,15 +3,27 @@
 import Link from "next/link"
 import Image from "next/image"
 import dynamic from "next/dynamic"
-import { ArrowRight, BarChart3, Brain, CreditCard, LogOut, PiggyBank, TrendingUp, User, Download, Menu, X, Loader2 } from "lucide-react"
+import { ArrowRight, BarChart3, Brain, CreditCard, LogOut, PiggyBank, TrendingUp, User, Download, Menu, X } from "lucide-react"
 import { useEffect, useState, Suspense } from "react"
-import { getCurrentUser, onAuthStateChanged, logOut } from "@/lib/firebase-auth"
+import { onAuthStateChanged, logOut } from "@/lib/firebase-auth"
 import { useRouter } from "next/navigation"
 import { LoadingSkeleton } from "@/components/loading-skeleton"
 
-// Lazy load Spline viewer for better performance
+// Fallback component for 3D visualization
 const SplineViewer = dynamic(
-  () => import('@splinetool/react-spline').then((mod) => mod.default),
+  () => Promise.resolve(() => (
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg">
+      <div className="text-center space-y-4">
+        <div className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+          <TrendingUp className="h-12 w-12 text-white" />
+        </div>
+        <div>
+          <h3 className="text-xl font-semibold text-gray-800">Financial Analytics</h3>
+          <p className="text-gray-600">Interactive 3D visualization</p>
+        </div>
+      </div>
+    </div>
+  )),
   {
     ssr: false,
     loading: () => <LoadingSkeleton type="spline" />
@@ -283,10 +295,7 @@ export default function HomePage() {
             </div>
             <div className="w-full md:w-1/2 h-[50vh] md:h-full relative">
               <Suspense fallback={<LoadingSkeleton type="spline" />}>
-                <SplineViewer
-                  scene="https://prod.spline.design/yiSHuuKcb4Eeqohj/scene.splinecode"
-                  className="w-full h-full absolute inset-0"
-                />
+                <SplineViewer />
               </Suspense>
             </div>
           </div>

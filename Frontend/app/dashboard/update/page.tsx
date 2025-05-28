@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { IndianRupee, Upload, Loader2 } from "lucide-react"
-import { collection, addDoc, Timestamp } from "firebase/firestore"
-import { firestore } from "@/lib/firebase"
 import { format } from "date-fns"
 import { extractTextFromPDF, extractTransactions, type Transaction } from "@/lib/pdf-extractor"
+import { addTransaction } from "@/lib/firebase-db"
 import Script from 'next/script'
 
 import { Button } from "@/components/ui/button"
@@ -58,10 +57,7 @@ export default function UpdateTransactionsPage() {
       return
     }
 
-    if (!firestore) {
-      setError('Firestore is not initialized')
-      return
-    }
+
 
     setIsLoading(true)
     setError(null)
@@ -72,11 +68,11 @@ export default function UpdateTransactionsPage() {
       const text = await extractTextFromPDF(file)
       setExtractedText(text)
       console.log('Extracted text:', text) // Debug log
-      
+
       // Extract transactions from text
       const transactions = extractTransactions(text)
       console.log('Extracted transactions:', transactions) // Debug log
-      
+
       setExtractedTransactions(transactions)
 
       if (transactions.length === 0) {
@@ -85,30 +81,27 @@ export default function UpdateTransactionsPage() {
         return
       }
 
-      // Store transactions in Firestore
-      const transactionsRef = collection(firestore, 'transactions')
-      
+      // Store transactions in Firebase Realtime Database
       const promises = transactions.map(async (transaction) => {
-        // Create a transaction document with the specified format
+        // Create a transaction in the format expected by firebase-db.ts
         const transactionData = {
-          date: format(transaction.timestamp, 'dd-MM-yyyy'),
-          type: transaction.transactionMode,
           merchantName: transaction.merchantName,
-          transactionId: Math.random().toString().substring(2, 14), // 12-digit transaction ID
-          amount: Math.abs(transaction.amount).toFixed(2),
-          isCredit: transaction.amount > 0,
-          timestamp: Timestamp.fromDate(new Date(transaction.timestamp)),
-          uploadedAt: Timestamp.now(),
-          ...(transaction.upiId && { upiId: transaction.upiId }),
-          ...(transaction.accountNumber && { accountNumber: transaction.accountNumber })
+          amount: Math.abs(transaction.amount),
+          transactionMode: transaction.transactionMode,
+          accountNumber: transaction.accountNumber || '',
+          timestamp: transaction.timestamp,
+          ...(transaction.upiId && { upiId: transaction.upiId })
         }
 
-        // Add the document to Firestore
-        return addDoc(transactionsRef, transactionData)
+        // Determine if it's credit or debit based on amount
+        const type = transaction.amount > 0 ? 'credit' : 'debit'
+
+        // Add the transaction using the existing firebase-db function
+        return addTransaction(transactionData, type)
       })
 
       await Promise.all(promises)
-      setSuccess(`Successfully uploaded ${transactions.length} transactions to Firestore!`)
+      setSuccess(`Successfully uploaded ${transactions.length} transactions to Firebase Database!`)
     } catch (err) {
       console.error('Error processing file:', err)
       setError(err instanceof Error ? err.message : 'Failed to process the PDF file')
@@ -124,15 +117,15 @@ export default function UpdateTransactionsPage() {
   return (
     <>
       {/* Load scripts */}
-      <Script 
+      <Script
         src="//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
         onLoad={() => setPdfJsLoaded(true)}
       />
-      <Script 
+      <Script
         src="//cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"
         onLoad={() => setTesseractLoaded(true)}
       />
-      
+
       <div className="flex min-h-screen flex-col">
         <div className="border-b">
           <div className="flex h-16 items-center px-4">
@@ -210,9 +203,9 @@ export default function UpdateTransactionsPage() {
                     </Alert>
                   )}
 
-                  <Button 
-                    type="submit" 
-                    disabled={!file || isLoading || !pdfJsLoaded} 
+                  <Button
+                    type="submit"
+                    disabled={!file || isLoading || !pdfJsLoaded}
                     className="w-full"
                   >
                     {isLoading ? (
@@ -236,7 +229,7 @@ export default function UpdateTransactionsPage() {
                         <TabsTrigger value="transactions">Extracted Transactions</TabsTrigger>
                         <TabsTrigger value="rawtext">Raw Text</TabsTrigger>
                       </TabsList>
-                      
+
                       <TabsContent value="transactions">
                         <h3 className="text-lg font-semibold mb-2">Extracted Transactions</h3>
                         <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -258,7 +251,7 @@ export default function UpdateTransactionsPage() {
                           ))}
                         </div>
                       </TabsContent>
-                      
+
                       <TabsContent value="rawtext">
                         <h3 className="text-lg font-semibold mb-2">Extracted Text</h3>
                         <div className="p-4 bg-gray-50 rounded-lg max-h-96 overflow-y-auto whitespace-pre-wrap text-sm">
@@ -275,4 +268,4 @@ export default function UpdateTransactionsPage() {
       </div>
     </>
   )
-} 
+}

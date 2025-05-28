@@ -54,7 +54,7 @@ export const initializeUserData = async () => {
 
   const auth = getAuth();
   const user = auth.currentUser;
-  if (!user) throw new Error('No user logged in');
+  if (!user) throw new Error('User or database not initialized');
 
   try {
     // Check if user data already exists
@@ -106,6 +106,13 @@ export const addBudget = async (budget: Omit<Budget, 'id' | 'budgetReached' | 'c
 
 export const getBudgets = async (): Promise<Budget[]> => {
   try {
+    const db = getDB();
+    if (!db) throw new Error('Database not available during SSR');
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) throw new Error('User or database not initialized');
+
     const snapshot = await get(getUserRef('/budgets'));
     if (!snapshot.exists()) return [];
     const budgets = snapshot.val();
@@ -158,6 +165,13 @@ export const addTransaction = async (
 
 export const getTransactions = async (type: 'credit' | 'debit'): Promise<Transaction[]> => {
   try {
+    const db = getDB();
+    if (!db) throw new Error('Database not available during SSR');
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) throw new Error('User or database not initialized');
+
     const snapshot = await get(getUserRef(`/${type}`));
     if (!snapshot.exists()) return [];
     const transactions = snapshot.val();
