@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import dynamic from "next/dynamic"
 import {
   ArrowDown,
   ArrowUp,
@@ -10,8 +11,9 @@ import {
   LineChart,
   Plus,
   Wallet,
+  Loader2,
 } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { ref, onValue, DataSnapshot } from "firebase/database"
 import { database } from "@/lib/firebase"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
@@ -21,13 +23,50 @@ import { subMonths, startOfMonth, endOfMonth } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { DashboardChart } from "@/components/dashboard-chart"
-import { DashboardNav } from "@/components/dashboard-nav"
-import ExpensePieChart from "@/components/expense-pie-chart"
-import { RecentTransactions } from "@/components/recent-transactions"
-import { BudgetStatus } from "@/components/budget-status"
 import { BaseTransaction, Transaction, Budget, MonthlyData, MerchantExpense } from "@/types/finance"
 import { useFinance } from "@/hooks/useFinance"
+import { LoadingSkeleton } from "@/components/loading-skeleton"
+
+// Lazy load heavy components for better performance
+const DashboardChart = dynamic(
+  () => import("@/components/dashboard-chart").then((mod) => ({ default: mod.DashboardChart })),
+  {
+    ssr: false,
+    loading: () => <LoadingSkeleton type="chart" />
+  }
+)
+
+const DashboardNav = dynamic(
+  () => import("@/components/dashboard-nav").then((mod) => ({ default: mod.DashboardNav })),
+  {
+    ssr: false,
+    loading: () => <LoadingSkeleton type="nav" />
+  }
+)
+
+const ExpensePieChart = dynamic(
+  () => import("@/components/expense-pie-chart"),
+  {
+    ssr: false,
+    loading: () => <LoadingSkeleton type="chart" />
+  }
+)
+
+const RecentTransactions = dynamic(
+  () => import("@/components/recent-transactions").then((mod) => ({ default: mod.RecentTransactions })),
+  {
+    ssr: false,
+    loading: () => <LoadingSkeleton type="list" />
+  }
+)
+
+const BudgetStatus = dynamic(
+  () => import("@/components/budget-status").then((mod) => ({ default: mod.BudgetStatus })),
+  {
+    ssr: false,
+    loading: () => <LoadingSkeleton type="card" />
+  }
+)
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -51,7 +90,7 @@ export default function DashboardPage() {
   const [balanceChange, setBalanceChange] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  
+
   // Data for child components
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([])
   const [merchantExpenses, setMerchantExpenses] = useState<MerchantExpense[]>([])
@@ -93,45 +132,45 @@ export default function DashboardPage() {
           const debitData: Record<string, BaseTransaction> = userData?.debit || {}
 
           // Process credit data
-          const creditTotal = Object.values(creditData).reduce((sum: number, transaction: BaseTransaction) => 
+          const creditTotal = Object.values(creditData).reduce((sum: number, transaction: BaseTransaction) =>
             sum + transaction.amount, 0)
           setTotalIncome(creditTotal)
-          
+
           // Process debit data
-          const debitTotal = Object.values(debitData).reduce((sum: number, transaction: BaseTransaction) => 
+          const debitTotal = Object.values(debitData).reduce((sum: number, transaction: BaseTransaction) =>
             sum + transaction.amount, 0)
           setTotalExpenses(debitTotal)
 
           // Calculate credit month-over-month change
           const currentMonth = new Date().getMonth()
-          const currentMonthCredits = Object.values(creditData).filter((tx: BaseTransaction) => 
+          const currentMonthCredits = Object.values(creditData).filter((tx: BaseTransaction) =>
             new Date(tx.timestamp).getMonth() === currentMonth
           )
-          const lastMonthCredits = Object.values(creditData).filter((tx: BaseTransaction) => 
+          const lastMonthCredits = Object.values(creditData).filter((tx: BaseTransaction) =>
             new Date(tx.timestamp).getMonth() === currentMonth - 1
           )
-          
+
           const currentMonthCreditTotal = currentMonthCredits.reduce((sum: number, tx: BaseTransaction) => sum + tx.amount, 0)
           const lastMonthCreditTotal = lastMonthCredits.reduce((sum: number, tx: BaseTransaction) => sum + tx.amount, 0)
-          
-          const creditChange = lastMonthCreditTotal > 0 
-            ? ((currentMonthCreditTotal - lastMonthCreditTotal) / lastMonthCreditTotal) * 100 
+
+          const creditChange = lastMonthCreditTotal > 0
+            ? ((currentMonthCreditTotal - lastMonthCreditTotal) / lastMonthCreditTotal) * 100
             : 0
           setIncomeChange(Number(creditChange.toFixed(1)))
 
           // Calculate debit month-over-month change
-          const currentMonthDebits = Object.values(debitData).filter((tx: BaseTransaction) => 
+          const currentMonthDebits = Object.values(debitData).filter((tx: BaseTransaction) =>
             new Date(tx.timestamp).getMonth() === currentMonth
           )
-          const lastMonthDebits = Object.values(debitData).filter((tx: BaseTransaction) => 
+          const lastMonthDebits = Object.values(debitData).filter((tx: BaseTransaction) =>
             new Date(tx.timestamp).getMonth() === currentMonth - 1
           )
-          
+
           const currentMonthDebitTotal = currentMonthDebits.reduce((sum: number, tx: BaseTransaction) => sum + tx.amount, 0)
           const lastMonthDebitTotal = lastMonthDebits.reduce((sum: number, tx: BaseTransaction) => sum + tx.amount, 0)
-          
-          const debitChange = lastMonthDebitTotal > 0 
-            ? ((currentMonthDebitTotal - lastMonthDebitTotal) / lastMonthDebitTotal) * 100 
+
+          const debitChange = lastMonthDebitTotal > 0
+            ? ((currentMonthDebitTotal - lastMonthDebitTotal) / lastMonthDebitTotal) * 100
             : 0
           setExpenseChange(Number(debitChange.toFixed(1)))
 
@@ -165,9 +204,9 @@ export default function DashboardPage() {
   useEffect(() => {
     const balance = totalIncome - totalExpenses
     setTotalBalance(balance)
-    
+
     // Calculate balance change percentage
-    const balanceChangePercent = totalIncome > 0 
+    const balanceChangePercent = totalIncome > 0
       ? ((balance / totalIncome) * 100)
       : 0
     setBalanceChange(Number(balanceChangePercent.toFixed(1)))

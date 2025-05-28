@@ -2,11 +2,21 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowRight, BarChart3, Brain, CreditCard, LogOut, PiggyBank, TrendingUp, User, Download, Menu, X } from "lucide-react"
-import Script from "next/script"
-import { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
+import { ArrowRight, BarChart3, Brain, CreditCard, LogOut, PiggyBank, TrendingUp, User, Download, Menu, X, Loader2 } from "lucide-react"
+import { useEffect, useState, Suspense } from "react"
 import { getCurrentUser, onAuthStateChanged, logOut } from "@/lib/firebase-auth"
 import { useRouter } from "next/navigation"
+import { LoadingSkeleton } from "@/components/loading-skeleton"
+
+// Lazy load Spline viewer for better performance
+const SplineViewer = dynamic(
+  () => import('@splinetool/react-spline').then((mod) => mod.default),
+  {
+    ssr: false,
+    loading: () => <LoadingSkeleton type="spline" />
+  }
+)
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -78,7 +88,6 @@ export default function HomePage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState<any>(null)
-  const [isSplineLoaded, setIsSplineLoaded] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
@@ -107,27 +116,22 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-900">
-      <Script 
-        type="module" 
-        src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"
-        onLoad={() => setIsSplineLoaded(true)}
-      />
-      
+
       {/* Navigation */}
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <Image 
-              src="/images/finance-logo.png" 
-              alt="FinanceBuddy Logo" 
-              width={40} 
-              height={40} 
+            <Image
+              src="/images/finance-logo.png"
+              alt="FinanceBuddy Logo"
+              width={40}
+              height={40}
               className="object-contain"
               priority
             />
             <span className="text-xl font-bold text-gray-900">FinanceBuddy</span>
           </div>
-          
+
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -143,27 +147,27 @@ export default function HomePage() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link 
-              href="#features" 
+            <Link
+              href="#features"
               className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
             >
               Features
             </Link>
-            <Link 
+            <Link
               href={user ? "/dashboard" : "/login"}
               className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
             >
               Dashboard
             </Link>
-            <Link 
+            <Link
               href={user ? "/fingpt" : "/login"}
               className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
             >
               FinGPT
             </Link>
             {!user ? (
-              <Button 
-                onClick={() => router.push('/login')} 
+              <Button
+                onClick={() => router.push('/login')}
                 size="sm"
                 className="ml-4 hover:scale-105 transition-transform"
               >
@@ -176,7 +180,7 @@ export default function HomePage() {
         </div>
 
         {/* Mobile Navigation Menu */}
-        <div 
+        <div
           className={`
             fixed inset-x-0 top-[64px] bg-white border-b md:hidden
             transform transition-all duration-300 ease-in-out
@@ -184,21 +188,21 @@ export default function HomePage() {
           `}
         >
           <nav className="container py-4 px-4 space-y-4">
-            <Link 
-              href="#features" 
+            <Link
+              href="#features"
               className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Features
             </Link>
-            <Link 
+            <Link
               href={user ? "/dashboard" : "/login"}
               className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Dashboard
             </Link>
-            <Link 
+            <Link
               href={user ? "/fingpt" : "/login"}
               className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -206,11 +210,11 @@ export default function HomePage() {
               FinGPT
             </Link>
             {!user ? (
-              <Button 
+              <Button
                 onClick={() => {
                   setIsMobileMenuOpen(false)
                   router.push('/login')
-                }} 
+                }}
                 size="sm"
                 className="w-full hover:scale-105 transition-transform"
               >
@@ -226,7 +230,7 @@ export default function HomePage() {
 
         {/* Overlay for mobile menu */}
         {isMobileMenuOpen && (
-          <div 
+          <div
             className="fixed inset-0 bg-black/20 md:hidden z-40"
             onClick={() => setIsMobileMenuOpen(false)}
             aria-hidden="true"
@@ -265,9 +269,9 @@ export default function HomePage() {
                       Download Android Application <Download className="h-4 w-4" />
                     </Button>
                     <Link href={user ? "/dashboard" : "/login"} className="w-full sm:w-auto">
-                      <Button 
-                        size="lg" 
-                        variant="outline" 
+                      <Button
+                        size="lg"
+                        variant="outline"
                         className="w-full gap-1.5 hover:scale-105 transition-transform duration-300"
                       >
                         View Dashboard <ArrowRight className="h-4 w-4" />
@@ -278,13 +282,12 @@ export default function HomePage() {
               </div>
             </div>
             <div className="w-full md:w-1/2 h-[50vh] md:h-full relative">
-              {isSplineLoaded && (
-                <spline-viewer 
-                  loading-anim-type="none" 
-                  url="https://prod.spline.design/yiSHuuKcb4Eeqohj/scene.splinecode"
+              <Suspense fallback={<LoadingSkeleton type="spline" />}>
+                <SplineViewer
+                  scene="https://prod.spline.design/yiSHuuKcb4Eeqohj/scene.splinecode"
                   className="w-full h-full absolute inset-0"
                 />
-              )}
+              </Suspense>
             </div>
           </div>
         </div>
@@ -423,7 +426,7 @@ export default function HomePage() {
             <div className="space-y-4">
               <h3 className="text-lg md:text-xl font-bold">About the Developer</h3>
               <p className="text-sm md:text-base text-gray-600">
-                Hi, I'm Omkar Gondkar, a passionate full-stack developer with expertise in modern web technologies. 
+                Hi, I'm Omkar Gondkar, a passionate full-stack developer with expertise in modern web technologies.
                 I created FinanceBuddy to help people manage their finances more effectively using the power of AI and intuitive design.
               </p>
               <div className="space-y-2">
@@ -434,8 +437,8 @@ export default function HomePage() {
             <div className="space-y-4">
               <h3 className="text-lg md:text-xl font-bold">Connect With Me</h3>
               <div className="space-y-4">
-                <Link 
-                  href="https://www.linkedin.com/in/og25/" 
+                <Link
+                  href="https://www.linkedin.com/in/og25/"
                   target="_blank"
                   className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
                 >
@@ -444,8 +447,8 @@ export default function HomePage() {
                   </svg>
                   <span className="text-sm md:text-base">LinkedIn Profile</span>
                 </Link>
-                <Link 
-                  href="https://github.com/Omkar2k5" 
+                <Link
+                  href="https://github.com/Omkar2k5"
                   target="_blank"
                   className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
                 >
@@ -464,4 +467,4 @@ export default function HomePage() {
       </footer>
     </div>
   )
-} 
+}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getAuth } from 'firebase/auth';
 import {
   Budget,
@@ -32,7 +32,7 @@ interface FinanceSummary {
 export const useFinance = () => {
   const auth = getAuth();
   const user = auth?.currentUser;
-  
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [summary, setSummary] = useState<FinanceSummary | null>(null);
@@ -51,20 +51,20 @@ export const useFinance = () => {
     }
   };
 
-  // Load all data
-  const loadData = async () => {
+  // Load all data with memoization
+  const loadData = useCallback(async () => {
     if (!user || !auth) {
       setLoading(false);
       return;
     }
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // First ensure user data is initialized
       await initializeUser();
-      
+
       const [budgetsData, creditsData, debitsData, summaryData] = await Promise.all([
         getBudgets(),
         getTransactions('credit'),
@@ -82,7 +82,7 @@ export const useFinance = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, auth]);
 
   // Initialize user data and load data when user changes
   useEffect(() => {
@@ -198,4 +198,4 @@ export const useFinance = () => {
     removeTransaction,
     refresh: loadData
   };
-}; 
+};

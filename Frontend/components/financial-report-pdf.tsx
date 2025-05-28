@@ -1,6 +1,5 @@
-import { Document, Page, Text, View, StyleSheet, PDFViewer } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { format } from 'date-fns';
-import type { Style } from '@react-pdf/types';
 import type { ComponentType } from 'react';
 
 // Create styles
@@ -324,4 +323,4 @@ export const FinancialReportPDF = ({
       </PDFPage>
     </PDFDocument>
   );
-}; 
+};

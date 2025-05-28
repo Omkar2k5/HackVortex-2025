@@ -70,6 +70,7 @@ export function DashboardChart({ data }: DashboardChartProps) {
             strokeWidth={2}
             dot={{ fill: "#10b981" }}
             activeDot={{ r: 8 }}
+            isAnimationActive={false}
           />
           <Line
             type="monotone"
@@ -78,6 +79,7 @@ export function DashboardChart({ data }: DashboardChartProps) {
             strokeWidth={2}
             dot={{ fill: "#ef4444" }}
             activeDot={{ r: 8 }}
+            isAnimationActive={false}
           />
         </LineChart>
       </ResponsiveContainer>

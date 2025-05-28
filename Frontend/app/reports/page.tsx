@@ -25,7 +25,7 @@ import type { FinancialReportPDFProps } from '@/types/financial-report'
 // Dynamic imports with type safety and loading states
 const DateRangePicker = dynamic<DateRangePickerProps>(
   () => import('@/components/ui/date-range-picker').then(mod => mod.DateRangePicker),
-  { 
+  {
     ssr: false,
     loading: () => <div className="flex items-center justify-center p-4">
       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
@@ -35,21 +35,31 @@ const DateRangePicker = dynamic<DateRangePickerProps>(
 
 const PDFViewer = dynamic<PDFViewerProps>(
   () => import('@/components/pdf-viewer').then(mod => mod.PDFViewer),
-  { 
+  {
     ssr: false,
-    loading: () => <div className="flex items-center justify-center p-8">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-    </div>
+    loading: () => (
+      <div className="flex items-center justify-center h-[80vh] border rounded-lg bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+          <p className="text-sm text-muted-foreground">Loading PDF Viewer...</p>
+        </div>
+      </div>
+    )
   }
 )
 
 const FinancialReportPDF = dynamic<FinancialReportPDFProps>(
   () => import('@/components/financial-report-pdf').then(mod => mod.FinancialReportPDF),
-  { 
+  {
     ssr: false,
-    loading: () => <div className="flex items-center justify-center p-4">
-      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-    </div>
+    loading: () => (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
+          <p className="text-sm text-muted-foreground">Generating Report...</p>
+        </div>
+      </div>
+    )
   }
 )
 
@@ -132,18 +142,18 @@ export default function ReportsPage() {
 
       // Calculate month-over-month change
       const currentMonth = new Date().getMonth()
-      const currentMonthCredits = filteredCredits.filter(tx => 
+      const currentMonthCredits = filteredCredits.filter(tx =>
         new Date(tx.timestamp).getMonth() === currentMonth
       )
-      const lastMonthCredits = filteredCredits.filter(tx => 
+      const lastMonthCredits = filteredCredits.filter(tx =>
         new Date(tx.timestamp).getMonth() === currentMonth - 1
       )
-      
+
       const currentMonthTotal = currentMonthCredits.reduce((sum, tx) => sum + tx.amount, 0)
       const lastMonthTotal = lastMonthCredits.reduce((sum, tx) => sum + tx.amount, 0)
-      
-      const change = lastMonthTotal > 0 
-        ? ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100 
+
+      const change = lastMonthTotal > 0
+        ? ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100
         : 0
       setIncomeChange(Number(change.toFixed(1)))
 
@@ -232,11 +242,11 @@ export default function ReportsPage() {
       <div className="border-b">
         <div className="flex h-16 items-center px-4">
           <Link href="/home" className="flex items-center gap-2">
-            <Image 
-              src="/images/finance-logo.png" 
-              alt="FinanceBuddy Logo" 
-              width={40} 
-              height={40} 
+            <Image
+              src="/images/finance-logo.png"
+              alt="FinanceBuddy Logo"
+              width={40}
+              height={40}
               className="object-contain"
               priority
             />
@@ -288,7 +298,7 @@ export default function ReportsPage() {
                 value={dateRange}
                 onChange={(range: DateRange | undefined) => setDateRange(range)}
               />
-              
+
               {canRenderPDF && (
                 <PDFViewer>
                   <FinancialReportPDF
@@ -313,4 +323,4 @@ export default function ReportsPage() {
       </div>
     </div>
   )
-} 
+}

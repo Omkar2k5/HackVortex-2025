@@ -1,19 +1,43 @@
 "use client"
 
 import Link from "next/link"
-import { DollarSign, HelpCircle } from "lucide-react"
+import dynamic from "next/dynamic"
+import { DollarSign, HelpCircle, Loader2 } from "lucide-react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { DashboardNav } from "@/components/dashboard-nav"
-import { ExpenseCategories } from "@/components/expense-categories"
-import { ExpenseList } from "@/components/expense-list"
 import { useFinance } from "@/hooks/useFinance"
 import { Transaction } from "@/types/finance"
+import { LoadingSkeleton } from "@/components/loading-skeleton"
+
+// Lazy load heavy components
+const DashboardNav = dynamic(
+  () => import("@/components/dashboard-nav").then((mod) => ({ default: mod.DashboardNav })),
+  {
+    ssr: false,
+    loading: () => <LoadingSkeleton type="nav" />
+  }
+)
+
+const ExpenseCategories = dynamic(
+  () => import("@/components/expense-categories").then((mod) => ({ default: mod.ExpenseCategories })),
+  {
+    ssr: false,
+    loading: () => <LoadingSkeleton type="card" />
+  }
+)
+
+const ExpenseList = dynamic(
+  () => import("@/components/expense-list").then((mod) => ({ default: mod.ExpenseList })),
+  {
+    ssr: false,
+    loading: () => <LoadingSkeleton type="list" />
+  }
+)
 
 export default function ExpensesPage() {
   const router = useRouter()
@@ -89,11 +113,11 @@ export default function ExpensesPage() {
         <div className="flex h-16 items-center px-4">
           <div className="flex items-center gap-2">
             <Link href="/home" className="flex items-center gap-2">
-              <Image 
-                src="/images/finance-logo.png" 
-                alt="FinanceBuddy Logo" 
-                width={40} 
-                height={40} 
+              <Image
+                src="/images/finance-logo.png"
+                alt="FinanceBuddy Logo"
+                width={40}
+                height={40}
                 className="object-contain"
                 priority
               />
