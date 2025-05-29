@@ -38,7 +38,6 @@ import {
 const DateRangePicker = dynamic(
   () => import('@/components/ui/date-range-picker').then(mod => mod.DateRangePicker),
   {
-    ssr: false,
     loading: () => <div className="flex items-center justify-center p-4">
       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
     </div>

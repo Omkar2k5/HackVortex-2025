@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import dynamic from "next/dynamic"
 import {
   ArrowDown,
@@ -31,7 +32,6 @@ import { LoadingSkeleton } from "@/components/loading-skeleton"
 const DashboardChart = dynamic(
   () => import("@/components/dashboard-chart").then((mod) => ({ default: mod.DashboardChart })),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="chart" />
   }
 )
@@ -39,7 +39,6 @@ const DashboardChart = dynamic(
 const DashboardNav = dynamic(
   () => import("@/components/dashboard-nav").then((mod) => ({ default: mod.DashboardNav })),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="nav" />
   }
 )
@@ -47,7 +46,6 @@ const DashboardNav = dynamic(
 const ExpensePieChart = dynamic(
   () => import("@/components/expense-pie-chart"),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="chart" />
   }
 )
@@ -55,7 +53,6 @@ const ExpensePieChart = dynamic(
 const RecentTransactions = dynamic(
   () => import("@/components/recent-transactions").then((mod) => ({ default: mod.RecentTransactions })),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="list" />
   }
 )
@@ -63,7 +60,6 @@ const RecentTransactions = dynamic(
 const BudgetStatus = dynamic(
   () => import("@/components/budget-status").then((mod) => ({ default: mod.BudgetStatus })),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="card" />
   }
 )
@@ -331,12 +327,21 @@ export default function DashboardPage() {
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-              <p className="text-muted-foreground">
-                Welcome back, {user?.displayName || user?.email?.split('@')[0] || 'User'}! Here's an overview of your finances.
-              </p>
+              <p className="text-muted-foreground">Your financial overview and insights</p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Link href="/transactions/add">
+                <Button size="sm">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Transaction
+                </Button>
+              </Link>
             </div>
           </div>
+
+          {/* Simple dashboard content */}
           <div className="space-y-4">
+            {/* Stats Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -369,6 +374,8 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Charts Placeholder */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <Card className="lg:col-span-4">
                 <CardHeader>
@@ -389,6 +396,8 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Transactions and Budget Placeholder */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <Card className="lg:col-span-4">
                 <CardHeader>
