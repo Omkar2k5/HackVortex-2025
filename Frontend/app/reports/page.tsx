@@ -12,6 +12,8 @@ import { DateRange } from 'react-day-picker'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { DashboardNav } from "@/components/dashboard-nav"
+import { pdf } from '@react-pdf/renderer'
+import { FinancialReportPDF } from '@/components/financial-report-pdf'
 import { useFinance } from "@/hooks/useFinance"
 import { Transaction, MerchantExpense } from "@/types/finance"
 import {
@@ -59,25 +61,58 @@ interface ReportDateRange {
 // Chart colors
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D', '#FFC658', '#FF7C7C']
 
-// PDF generation function using html-to-image
-const generatePDF = async (elementId: string, filename: string) => {
+// PDF generation function using @react-pdf/renderer
+const generatePDF = async (reportData: any, dateRange: { from: Date; to: Date }, filename: string) => {
   try {
-    const { default: html2canvas } = await import('html-to-image')
-    const element = document.getElementById(elementId)
-    if (!element) return
+    // Capture chart images first
+    const html2canvas = await import('html-to-image')
+    const reportElement = document.getElementById('report-content')
+    if (!reportElement) {
+      console.error('Report element not found')
+      return
+    }
 
-    const dataUrl = await html2canvas.toPng(element, {
+    const chartImageUrl = await html2canvas.toPng(reportElement, {
       quality: 0.95,
-      backgroundColor: '#ffffff'
+      backgroundColor: '#ffffff',
+      pixelRatio: 2
     })
+
+    // Ensure data has safe defaults
+    const safeReportData = {
+      totalIncome: reportData?.totalIncome || 0,
+      incomeChange: reportData?.incomeChange || 0,
+      creditTransactions: reportData?.creditTransactions || [],
+      topIncomeSources: reportData?.topIncomeSources || [],
+      topExpenseCategories: reportData?.topExpenseCategories || []
+    }
+
+    // Generate PDF using react-pdf
+    const pdfBlob = await pdf(
+      <FinancialReportPDF
+        dateRange={dateRange}
+        totalIncome={safeReportData.totalIncome}
+        incomeChange={safeReportData.incomeChange}
+        creditTransactions={safeReportData.creditTransactions}
+        incomeData={safeReportData.topIncomeSources}
+        expenseData={safeReportData.topExpenseCategories}
+        chartImageUrl={chartImageUrl}
+      />
+    ).toBlob()
 
     // Create download link
     const link = document.createElement('a')
     link.download = filename
-    link.href = dataUrl
+    link.href = URL.createObjectURL(pdfBlob)
+    document.body.appendChild(link)
     link.click()
+    document.body.removeChild(link)
+
+    // Clean up
+    URL.revokeObjectURL(link.href)
   } catch (error) {
     console.error('Error generating PDF:', error)
+    alert('Failed to generate PDF. Please try again.')
   }
 }
 
@@ -155,7 +190,7 @@ export default function ReportsPage() {
       const topIncomeSources = Object.entries(incomeBySource)
         .map(([name, amount]) => ({ name, amount }))
         .sort((a, b) => b.amount - a.amount)
-        .slice(0, 10)
+        .slice(0, 5)
 
       // Top expense categories
       const expensesByCategory = filteredDebitsData.reduce((acc, tx) => {
@@ -166,7 +201,7 @@ export default function ReportsPage() {
       const topExpenseCategories = Object.entries(expensesByCategory)
         .map(([name, amount]) => ({ name, amount }))
         .sort((a, b) => b.amount - a.amount)
-        .slice(0, 10)
+        .slice(0, 5)
 
       // Monthly trend data
       const monthlyData = new Map<string, { income: number; expenses: number }>()
@@ -191,8 +226,7 @@ export default function ReportsPage() {
         .map(([month, data]) => ({
           month,
           income: data.income,
-          expenses: data.expenses,
-          net: data.income - data.expenses
+          expenses: data.expenses
         }))
         .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime())
 
@@ -216,8 +250,12 @@ export default function ReportsPage() {
 
   // Handle PDF download
   const handleDownloadPDF = () => {
-    const filename = `financial-report-${format(new Date(), 'yyyy-MM-dd')}.png`
-    generatePDF('report-content', filename)
+    if (!dateRange?.from || !dateRange?.to) {
+      alert('Please select a valid date range first.')
+      return
+    }
+    const filename = `financial-report-${format(new Date(), 'yyyy-MM-dd')}.pdf`
+    generatePDF(reportData, { from: dateRange.from, to: dateRange.to }, filename)
   }
 
   if (isLoading || dataLoading) {
@@ -385,7 +423,6 @@ export default function ReportsPage() {
                           <Legend />
                           <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2} name="Income" />
                           <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} name="Expenses" />
-                          <Line type="monotone" dataKey="net" stroke="#3b82f6" strokeWidth={2} name="Net" />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>

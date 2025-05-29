@@ -21,19 +21,19 @@ async function renderPageToCanvas(page: any, scale = 2.0): Promise<HTMLCanvasEle
   const viewport = page.getViewport({ scale });
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  
+
   canvas.height = viewport.height;
   canvas.width = viewport.width;
-  
+
   await page.render({
     canvasContext: context,
     viewport: viewport
   }).promise;
-  
+
   return canvas;
 }
 
-// Perform OCR on image using Tesseract.js
+// Perform OCR on image using Tesseract.js with enhanced settings
 async function performOCR(imageDataUrl: string): Promise<string> {
   if (typeof window === 'undefined' || !window.Tesseract) {
     console.warn('Tesseract not available, skipping OCR');
@@ -41,15 +41,18 @@ async function performOCR(imageDataUrl: string): Promise<string> {
   }
 
   try {
-    console.log('Starting OCR processing...');
+    console.log('Starting enhanced OCR processing...');
     const result = await window.Tesseract.recognize(
       imageDataUrl,
       'eng',
-      { 
-        logger: (m: any) => console.log(`OCR: ${m.status} ${m.progress ? Math.round(m.progress * 100) + '%' : ''}`)
+      {
+        logger: (m: any) => console.log(`OCR: ${m.status} ${m.progress ? Math.round(m.progress * 100) + '%' : ''}`),
+        tessedit_pageseg_mode: '6', // Uniform block of text
+        tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,/-:@() ',
+        preserve_interword_spaces: '1',
       }
     );
-    console.log('OCR completed');
+    console.log('Enhanced OCR completed');
     return result.data.text;
   } catch (error) {
     console.error('OCR error:', error);
@@ -70,15 +73,15 @@ export async function extractTextFromPDF(file: File): Promise<string> {
   try {
     // Read the file as ArrayBuffer
     const arrayBuffer = await file.arrayBuffer();
-    
+
     // Load PDF document
     const loadingTask = window.pdfjsLib.getDocument({ data: arrayBuffer });
     const pdf = await loadingTask.promise;
-    
+
     let fullText = '';
-    
+
     console.log(`PDF loaded. Pages: ${pdf.numPages}`);
-    
+
     // First try standard text extraction
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
@@ -90,40 +93,38 @@ export async function extractTextFromPDF(file: File): Promise<string> {
     const standardTextLength = fullText.trim().length;
     console.log(`Standard extraction: ${standardTextLength} characters`);
 
-    // Try OCR if standard extraction yields little text
-    if (standardTextLength < 200 && window.Tesseract) {
-      console.log('Insufficient text, trying OCR...');
-      
+    // Always try OCR for bank statements as they often have complex layouts
+    if (window.Tesseract) {
+      console.log('Running OCR for enhanced text extraction...');
+
       let ocrText = '';
-      
-      // Process only first 2 pages to save time
-      const pagesToProcess = Math.min(pdf.numPages, 2);
-      
+
+      // Process up to 5 pages for better transaction extraction
+      const pagesToProcess = Math.min(pdf.numPages, 5);
+
       for (let i = 1; i <= pagesToProcess; i++) {
         console.log(`OCR processing page ${i}/${pagesToProcess}`);
         const page = await pdf.getPage(i);
-        const canvas = await renderPageToCanvas(page);
+        const canvas = await renderPageToCanvas(page, 3.0); // Higher scale for better OCR
         const imageDataUrl = canvas.toDataURL('image/png');
         const pageText = await performOCR(imageDataUrl);
         ocrText += pageText + '\n';
         canvas.remove();
       }
-      
+
       const ocrTextLength = ocrText.trim().length;
-      
-      // Use OCR results if they contain more text
+      console.log(`OCR extraction: ${ocrTextLength} characters`);
+
+      // Use OCR results if they contain more text, or combine both
       if (ocrTextLength > standardTextLength) {
         console.log(`Using OCR results (${ocrTextLength} chars)`);
         return ocrText;
-      }
-      
-      // Otherwise, combine both results
-      if (ocrTextLength > 0) {
+      } else if (ocrTextLength > 0) {
         console.log('Combining standard and OCR results');
         return fullText + '\n' + ocrText;
       }
     }
-    
+
     return fullText;
   } catch (error) {
     console.error('Error extracting PDF text:', error);
@@ -134,50 +135,50 @@ export async function extractTextFromPDF(file: File): Promise<string> {
 // Extract transactions from text
 export function extractTransactions(text: string): Transaction[] {
   const transactions: Transaction[] = [];
-  
+
   // Preprocess text to clean up OCR artifacts and normalize spacing
   text = text.replace(/\s+/g, ' ');
-  
+
   // Log the first 500 characters of text for debugging
   console.log('Text sample for extraction:', text.substring(0, 500));
-  
+
   // Multiple patterns to match different transaction formats
   const patterns = [
     // Kotak Bank specific pattern with date, description and amount
     /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\s+([A-Za-z0-9\s\.,\-_:@\/\\&\(\)]+?)\s+(?:INR|Rs\.?|₹)?\s*(\d+(?:[,.]\d+)*\.?\d*)/i,
-    
+
     // UPI transaction pattern - more flexible
     /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\s+(?:UPI[\-\s])?([^\d]+?)(?:UPI[\-\s])?\s+(?:INR|Rs\.?|₹)?\s*(\d+(?:[,.]\d+)*\.?\d*)/i,
-    
+
     // Card/POS transaction pattern - more flexible
     /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\s+(?:POS|ATM|CARD)\s+([^\d]+?)\s+(?:INR|Rs\.?|₹)?\s*(\d+(?:[,.]\d+)*\.?\d*)/i,
-    
+
     // NEFT/IMPS/RTGS pattern - more flexible
     /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\s+(?:NEFT|IMPS|RTGS)\s+([^\d]+?)\s+(?:INR|Rs\.?|₹)?\s*(\d+(?:[,.]\d+)*\.?\d*)/i,
-    
+
     // Amount with CR/DR indicator - more flexible
     /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\s+([^\d]+?)\s+(?:INR|Rs\.?|₹)?\s*(\d+(?:[,.]\d+)*\.?\d*)\s*(?:CR|DR|Cr|Dr)/i,
-    
+
     // General format for bank statements - more flexible
     /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\s+([A-Za-z0-9\s\.,\-_:@\/\\&\(\)]+?)\s+(?:INR|Rs\.?|₹)?\s*(\d+(?:[,.]\d+)*\.?\d*)/i,
-    
+
     // Pattern for tabular data with date at beginning
     /(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4})\s+([A-Za-z0-9\s\.@,\-_:\/\\&\(\)]+)\s+([0-9,.]+)/i,
-    
+
     // Pattern for statements with date and amount at beginning and end
     /(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4})\s+([A-Za-z0-9\s\.@,\-_:\/\\&\(\)]+)\s+([0-9,.]+)(?:\s+(?:CR|DR|Cr|Dr))?/i
   ];
 
   // Process each line of text
   const lines = text.split('\n');
-  
+
   console.log(`Processing ${lines.length} lines for transactions`);
-  
+
   // Process chunks of text (some statements might span multiple lines)
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
-    
+
     // Try to combine with next line if it looks like it might be part of the same transaction
     let combinedLine = line;
     if (i < lines.length - 1 && !lines[i+1].match(/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/)) {
@@ -190,12 +191,12 @@ export function extractTransactions(text: string): Transaction[] {
       if (match) {
         try {
           let [_, dateStr, description, amountStr] = match;
-          
+
           console.log(`Found potential transaction: Date=${dateStr}, Description=${description}, Amount=${amountStr}`);
-          
+
           // Clean date string and normalize format
           dateStr = dateStr.replace(/[/-]/g, '/');
-          
+
           // Try multiple date formats
           let timestamp: number;
           try {
@@ -219,26 +220,26 @@ export function extractTransactions(text: string): Transaction[] {
           // Clean amount - handle different formats
           amountStr = amountStr.replace(/[,\s₹Rs.INR]/gi, '');
           let amount = parseFloat(amountStr);
-          
+
           if (isNaN(amount)) {
             console.warn(`Invalid amount: ${amountStr}`);
             continue;
           }
 
           // Determine if credit or debit
-          const isDebit = combinedLine.toLowerCase().includes('dr') || 
-                          combinedLine.toLowerCase().includes('debit') || 
-                          combinedLine.toLowerCase().includes('withdrawal') || 
-                          combinedLine.toLowerCase().includes('paid') || 
+          const isDebit = combinedLine.toLowerCase().includes('dr') ||
+                          combinedLine.toLowerCase().includes('debit') ||
+                          combinedLine.toLowerCase().includes('withdrawal') ||
+                          combinedLine.toLowerCase().includes('paid') ||
                           combinedLine.toLowerCase().includes('purchase') ||
                           combinedLine.toLowerCase().includes('deducted');
-                          
-          const isCredit = combinedLine.toLowerCase().includes('cr') || 
-                           combinedLine.toLowerCase().includes('credit') || 
-                           combinedLine.toLowerCase().includes('received') || 
+
+          const isCredit = combinedLine.toLowerCase().includes('cr') ||
+                           combinedLine.toLowerCase().includes('credit') ||
+                           combinedLine.toLowerCase().includes('received') ||
                            combinedLine.toLowerCase().includes('refund') ||
                            combinedLine.toLowerCase().includes('added');
-          
+
           if (isDebit) {
             amount = -Math.abs(amount);
           } else if (isCredit) {
@@ -270,7 +271,7 @@ export function extractTransactions(text: string): Transaction[] {
           const upiId = upiMatch ? upiMatch[1] : undefined;
 
           // Extract account number - more patterns
-          const accountMatch = combinedLine.match(/A\/c\s*:?\s*(\d+)/i) || 
+          const accountMatch = combinedLine.match(/A\/c\s*:?\s*(\d+)/i) ||
                                combinedLine.match(/Account\s*:?\s*(\d+)/i) ||
                                combinedLine.match(/Acct\s*:?\s*(\d+)/i) ||
                                combinedLine.match(/AC\s*:?\s*(\d+)/i) ||
@@ -284,7 +285,7 @@ export function extractTransactions(text: string): Transaction[] {
             .substring(0, 100);
 
           console.log(`Processed transaction: ${description}, ${amount}, ${format(timestamp, 'dd/MM/yyyy')}`);
-          
+
           transactions.push({
             merchantName: description,
             amount,
@@ -304,7 +305,7 @@ export function extractTransactions(text: string): Transaction[] {
   }
 
   console.log(`Found ${transactions.length} transactions`);
-  
+
   // Sort by date
   return transactions.sort((a, b) => a.timestamp - b.timestamp);
 }

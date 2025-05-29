@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 import type { ComponentType } from 'react';
 
@@ -162,6 +162,12 @@ const styles = StyleSheet.create({
     color: '#718096',
     marginTop: 2,
   },
+  chartImage: {
+    width: '100%',
+    height: 300,
+    marginVertical: 20,
+    objectFit: 'contain',
+  },
 });
 
 // Add type declarations for PDF components
@@ -169,6 +175,7 @@ const PDFDocument = Document as ComponentType<any>;
 const PDFPage = Page as ComponentType<any>;
 const PDFView = View as ComponentType<any>;
 const PDFText = Text as ComponentType<any>;
+const PDFImage = Image as ComponentType<any>;
 
 interface Transaction {
   accountNumber: string;
@@ -194,22 +201,24 @@ interface FinancialReportPDFProps {
     from: Date;
     to: Date;
   };
-  totalIncome: number;
-  incomeChange: number;
-  creditTransactions: Transaction[];
-  incomeData: IncomeData[];
-  expenseData: ExpenseData[];
+  totalIncome?: number;
+  incomeChange?: number;
+  creditTransactions?: Transaction[];
+  incomeData?: IncomeData[];
+  expenseData?: ExpenseData[];
+  chartImageUrl?: string;
 }
 
 export const FinancialReportPDF = ({
   dateRange,
-  totalIncome,
-  incomeChange,
-  creditTransactions,
-  incomeData,
-  expenseData,
+  totalIncome = 0,
+  incomeChange = 0,
+  creditTransactions = [],
+  incomeData = [],
+  expenseData = [],
+  chartImageUrl,
 }: FinancialReportPDFProps) => {
-  const totalExpenses = expenseData.reduce((sum, item) => sum + item.value, 0);
+  const totalExpenses = expenseData.reduce((sum, item) => sum + (item?.value || 0), 0);
   const netIncome = totalIncome - totalExpenses;
 
   return (
@@ -245,6 +254,14 @@ export const FinancialReportPDF = ({
           </PDFView>
         </PDFView>
 
+        {/* Chart Image Section */}
+        {chartImageUrl && (
+          <PDFView style={styles.section}>
+            <PDFText style={styles.sectionTitle}>Financial Charts</PDFText>
+            <PDFImage src={chartImageUrl} style={styles.chartImage} />
+          </PDFView>
+        )}
+
         <PDFView style={styles.section}>
           <PDFText style={styles.sectionTitle}>Income Overview</PDFText>
           <PDFView style={styles.row}>
@@ -267,54 +284,66 @@ export const FinancialReportPDF = ({
 
         <PDFView style={styles.section}>
           <PDFText style={styles.sectionTitle}>Income Sources</PDFText>
-          {incomeData.map((income, index) => (
+          {incomeData && incomeData.length > 0 ? incomeData.map((income, index) => (
             <PDFView key={index} style={styles.row}>
-              <PDFText style={styles.label}>{income.name}</PDFText>
+              <PDFText style={styles.label}>{income?.name || 'Unknown Source'}</PDFText>
               <PDFView style={styles.valueContainer}>
                 <PDFText style={[styles.value, styles.valuePositive]}>
-                  ₹{income.value.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  ₹{(income?.value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </PDFText>
               </PDFView>
             </PDFView>
-          ))}
+          )) : (
+            <PDFView style={styles.row}>
+              <PDFText style={styles.label}>No income data available</PDFText>
+            </PDFView>
+          )}
         </PDFView>
 
         <PDFView style={styles.section}>
           <PDFText style={styles.sectionTitle}>Expense Breakdown</PDFText>
-          {expenseData.map((expense, index) => (
+          {expenseData && expenseData.length > 0 ? expenseData.map((expense, index) => (
             <PDFView key={index} style={styles.row}>
-              <PDFText style={styles.label}>{expense.name}</PDFText>
+              <PDFText style={styles.label}>{expense?.name || 'Unknown Expense'}</PDFText>
               <PDFView style={styles.valueContainer}>
                 <PDFText style={[styles.value, styles.valueNegative]}>
-                  ₹{expense.value.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  ₹{(expense?.value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </PDFText>
               </PDFView>
             </PDFView>
-          ))}
+          )) : (
+            <PDFView style={styles.row}>
+              <PDFText style={styles.label}>No expense data available</PDFText>
+            </PDFView>
+          )}
         </PDFView>
 
         <PDFView style={styles.section}>
           <PDFText style={styles.sectionTitle}>Recent Transactions</PDFText>
-          {creditTransactions.slice(0, 5).map((transaction, index) => (
+          {creditTransactions && creditTransactions.length > 0 ? creditTransactions.slice(0, 5).map((transaction, index) => (
             <PDFView key={index} style={styles.transactionRow}>
               <PDFView style={styles.transactionDetails}>
-                <PDFText style={styles.transactionTitle}>{transaction.merchantName}</PDFText>
-                <PDFText style={styles.transactionCategory}>{transaction.transactionMode}</PDFText>
+                <PDFText style={styles.transactionTitle}>{transaction?.merchantName || 'Unknown Merchant'}</PDFText>
+                <PDFText style={styles.transactionCategory}>{transaction?.transactionMode || 'Unknown Mode'}</PDFText>
               </PDFView>
               <PDFView style={styles.transactionAmount}>
-                <PDFText style={[styles.value, transaction.amount > 0 ? styles.valuePositive : styles.valueNegative]}>
-                  ₹{Math.abs(transaction.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                <PDFText style={[styles.value, (transaction?.amount || 0) > 0 ? styles.valuePositive : styles.valueNegative]}>
+                  ₹{Math.abs(transaction?.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </PDFText>
                 <PDFText style={styles.transactionDate}>
-                  {new Date(transaction.timestamp).toLocaleDateString('en-IN', {
+                  {transaction?.timestamp ? new Date(transaction.timestamp).toLocaleDateString('en-IN', {
                     day: '2-digit',
                     month: 'short',
                     year: 'numeric'
-                  })}
+                  }) : 'Unknown Date'}
                 </PDFText>
               </PDFView>
             </PDFView>
-          ))}
+          )) : (
+            <PDFView style={styles.row}>
+              <PDFText style={styles.label}>No recent transactions available</PDFText>
+            </PDFView>
+          )}
         </PDFView>
 
         <PDFText style={styles.footer}>

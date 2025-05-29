@@ -5,6 +5,7 @@ import Link from "next/link"
 import { IndianRupee, Upload, Loader2 } from "lucide-react"
 import { format } from "date-fns"
 import { extractTextFromPDF, extractTransactions, type Transaction } from "@/lib/pdf-extractor"
+import { parseKotakBankStatement } from "@/lib/kotak-parser"
 import { addTransaction } from "@/lib/firebase-db"
 import Script from 'next/script'
 
@@ -69,8 +70,16 @@ export default function UpdateTransactionsPage() {
       setExtractedText(text)
       console.log('Extracted text:', text) // Debug log
 
-      // Extract transactions from text
-      const transactions = extractTransactions(text)
+      // Detect if it's a Kotak bank statement and use appropriate parser
+      let transactions: Transaction[] = [];
+      if (text.toLowerCase().includes('kotak') || text.toLowerCase().includes('kotak mahindra bank')) {
+        console.log('Detected Kotak bank statement, using specialized parser...')
+        transactions = parseKotakBankStatement(text)
+      } else {
+        console.log('Using general transaction extractor...')
+        transactions = extractTransactions(text)
+      }
+
       console.log('Extracted transactions:', transactions) // Debug log
 
       setExtractedTransactions(transactions)
@@ -254,6 +263,14 @@ export default function UpdateTransactionsPage() {
 
                       <TabsContent value="rawtext">
                         <h3 className="text-lg font-semibold mb-2">Extracted Text</h3>
+                        <div className="mb-4">
+                          <p className="text-sm text-gray-600">
+                            Parser used: {extractedText?.toLowerCase().includes('kotak') ? 'Kotak Specialized Parser' : 'General Parser'}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Text length: {extractedText?.length || 0} characters
+                          </p>
+                        </div>
                         <div className="p-4 bg-gray-50 rounded-lg max-h-96 overflow-y-auto whitespace-pre-wrap text-sm">
                           {extractedText || "No text extracted yet"}
                         </div>
