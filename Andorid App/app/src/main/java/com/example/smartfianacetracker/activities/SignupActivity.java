@@ -84,8 +84,8 @@ public class SignupActivity extends AppCompatActivity {
                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                     finish();
                 } else {
-                    showError(task.getException() != null ? 
-                        task.getException().getMessage() : 
+                    showError(task.getException() != null ?
+                        task.getException().getMessage() :
                         "Sign up failed");
                 }
             });
@@ -108,8 +108,8 @@ public class SignupActivity extends AppCompatActivity {
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         finish();
                     } else {
-                        showError(task.getException() != null ? 
-                            task.getException().getMessage() : 
+                        showError(task.getException() != null ?
+                            task.getException().getMessage() :
                             "Google sign up failed");
                     }
                 });
@@ -164,4 +164,4 @@ public class SignupActivity extends AppCompatActivity {
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
-} 
+}

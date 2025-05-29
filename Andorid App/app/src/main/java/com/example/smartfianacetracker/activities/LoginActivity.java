@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton.setOnClickListener(v -> handleEmailLogin());
         googleButton.setOnClickListener(v -> handleGoogleLogin());
-        findViewById(R.id.signupText).setOnClickListener(v -> 
+        findViewById(R.id.signupText).setOnClickListener(v ->
             startActivity(new Intent(this, SignupActivity.class)));
     }
 
@@ -94,8 +94,8 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(new Intent(this, MainActivity.class));
                     finish();
                 } else {
-                    showError(task.getException() != null ? 
-                        task.getException().getMessage() : 
+                    showError(task.getException() != null ?
+                        task.getException().getMessage() :
                         "Login failed");
                 }
             });
@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             Log.d(TAG, "Google Sign In successful, account email: " + account.getEmail());
-            
+
             setLoading(true);
             firebaseManager.signInWithGoogle(account)
                 .addOnCompleteListener(task -> {
@@ -191,4 +191,4 @@ public class LoginActivity extends AppCompatActivity {
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
-} 
+}

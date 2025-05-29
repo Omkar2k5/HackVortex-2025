@@ -2,67 +2,322 @@ package com.example.smartfianacetracker.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.appcompat.widget.Toolbar;
+import android.preference.PreferenceManager;
 import com.example.smartfianacetracker.R;
 import com.example.smartfianacetracker.SmsService;
-import com.example.smartfianacetracker.utils.PreferenceManager;
-import com.google.android.material.button.MaterialButton;
+import com.example.smartfianacetracker.databinding.ActivityMainBinding;
+import com.example.smartfianacetracker.utils.FirebaseManager;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.FirebaseApp;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import android.widget.TextView;
+import android.widget.ImageView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int PERMISSION_REQUEST_CODE = 123;
-    private SwitchMaterial serviceToggle;
-    private PreferenceManager preferenceManager;
-    private Toolbar toolbar;
-    private MaterialButton linkedinButton;
-    private MaterialButton githubButton;
+    private static final String TAG = "MainActivity";
+    private static final int PERMISSIONS_REQUEST_CODE = 123;
 
-    private final String[] REQUIRED_PERMISSIONS = {
-        Manifest.permission.RECEIVE_SMS,
-        Manifest.permission.READ_SMS,
-        Manifest.permission.POST_NOTIFICATIONS
-    };
+    private ActivityMainBinding binding;
+    private boolean isServiceRunning = false;
+    private SwitchMaterial serviceToggle;
+    private SharedPreferences sharedPreferences;
+    private FirebaseManager firebaseManager;
+
+    private List<String> requiredPermissions = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        try {
+            super.onCreate(savedInstanceState);
+            Log.d(TAG, "Starting MainActivity");
 
-        setupToolbar();
-        setupServiceToggle();
-        setupSocialButtons();
-        
-        // Show permission dialog if permissions not granted
-        if (!checkPermissions()) {
-            showPermissionExplanationDialog();
+            // Initialize required permissions
+            initializePermissions();
+
+            // Initialize Firebase
+            if (!isFirebaseInitialized()) {
+                FirebaseApp.initializeApp(this);
+                Log.d(TAG, "Firebase initialized");
+            }
+
+            // Initialize FirebaseManager
+            firebaseManager = FirebaseManager.getInstance(this);
+
+            // Check authentication status first
+            if (!checkAuthenticationStatus()) {
+                Log.d(TAG, "Authentication failed, redirecting to login");
+                redirectToLogin();
+                return;
+            }
+
+            Log.d(TAG, "Authentication successful, proceeding with main activity");
+
+            // Setup view binding
+            binding = ActivityMainBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+
+            // Setup toolbar
+            setSupportActionBar(binding.toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("FinanceBuddy");
+            }
+
+            // Display user information
+            displayUserInfo();
+
+            // Initialize Firebase structure for authenticated user
+            initializeFirebaseStructure();
+
+            // Initialize preferences and toggle
+            setupPreferencesAndToggle();
+
+            // Check permissions immediately when app starts
+            if (!areAllPermissionsGranted()) {
+                showPermissionExplanationDialog();
+            } else {
+                initializeServiceIfEnabled();
+            }
+
+            Log.d(TAG, "MainActivity onCreate completed");
+        } catch (Exception e) {
+            Log.e(TAG, "Error in onCreate", e);
+            handleError("Error initializing app", e);
         }
     }
 
-    private void setupToolbar() {
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    private void initializePermissions() {
+        requiredPermissions.add(Manifest.permission.RECEIVE_SMS);
+        requiredPermissions.add(Manifest.permission.READ_SMS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requiredPermissions.add(Manifest.permission.POST_NOTIFICATIONS);
+        }
     }
 
-    private void setupServiceToggle() {
-        preferenceManager = new PreferenceManager(this);
+    private boolean checkAuthenticationStatus() {
+        try {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            boolean isLoggedInPrefs = firebaseManager.isLoggedIn();
+
+            Log.d(TAG, "Firebase current user: " + (currentUser != null ? currentUser.getEmail() : "null"));
+            Log.d(TAG, "Preferences logged in: " + isLoggedInPrefs);
+
+            // If there's inconsistency in authentication state, clear everything
+            if (currentUser == null && isLoggedInPrefs) {
+                Log.w(TAG, "Inconsistent auth state: clearing preferences");
+                clearAuthenticationData();
+                return false;
+            }
+
+            if (currentUser != null && !isLoggedInPrefs) {
+                Log.w(TAG, "Inconsistent auth state: Firebase user exists but prefs say not logged in");
+                clearAuthenticationData();
+                return false;
+            }
+
+            boolean isAuthenticated = currentUser != null && isLoggedInPrefs;
+            Log.d(TAG, "Final authentication status: " + isAuthenticated);
+
+            return isAuthenticated;
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking authentication status", e);
+            clearAuthenticationData();
+            return false;
+        }
+    }
+
+    private void clearAuthenticationData() {
+        try {
+            Log.d(TAG, "Clearing authentication data");
+            FirebaseAuth.getInstance().signOut();
+            com.example.smartfianacetracker.utils.PreferenceManager preferenceManager =
+                new com.example.smartfianacetracker.utils.PreferenceManager(this);
+            preferenceManager.clearSession();
+        } catch (Exception e) {
+            Log.e(TAG, "Error clearing authentication data", e);
+        }
+    }
+
+    private void redirectToLogin() {
+        Log.d(TAG, "Redirecting to login");
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void displayUserInfo() {
+        FirebaseUser currentUser = firebaseManager.getCurrentUser();
+        if (currentUser != null) {
+            String email = currentUser.getEmail() != null ? currentUser.getEmail() : "Unknown";
+            String displayName = currentUser.getDisplayName() != null ?
+                currentUser.getDisplayName() : email.substring(0, email.indexOf("@"));
+
+            // Update toolbar subtitle with user info
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setSubtitle("Welcome, " + displayName);
+            }
+
+            // Update user info card
+            updateUserInfoCard(displayName, email);
+
+            Log.d(TAG, "User logged in: " + email);
+        } else {
+            Log.e(TAG, "No authenticated user found in displayUserInfo");
+            // This should not happen if authentication check passed
+            redirectToLogin();
+        }
+    }
+
+    private void updateUserInfoCard(String displayName, String email) {
+        try {
+            TextView userNameText = findViewById(R.id.userNameText);
+            TextView userEmailText = findViewById(R.id.userEmailText);
+
+            if (userNameText != null) {
+                userNameText.setText("Welcome, " + displayName);
+            }
+            if (userEmailText != null) {
+                userEmailText.setText(email);
+            }
+
+            // Update service status
+            updateServiceStatus();
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating user info card", e);
+        }
+    }
+
+    private void updateServiceStatus() {
+        try {
+            TextView serviceStatusText = findViewById(R.id.serviceStatusText);
+            ImageView serviceStatusIcon = findViewById(R.id.serviceStatusIcon);
+
+            boolean isServiceEnabled = sharedPreferences.getBoolean("service_enabled", false);
+
+            if (serviceStatusText != null && serviceStatusIcon != null) {
+                if (isServiceEnabled) {
+                    serviceStatusText.setText("Service: Active");
+                    serviceStatusText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_light));
+                    serviceStatusIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.holo_green_light));
+                } else {
+                    serviceStatusText.setText("Service: Inactive");
+                    serviceStatusText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_light));
+                    serviceStatusIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.holo_red_light));
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating service status", e);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_logout) {
+            showLogoutConfirmation();
+            return true;
+        } else if (itemId == R.id.action_profile) {
+            showUserProfile();
+            return true;
+        } else if (itemId == R.id.action_debug_clear_auth) {
+            showDebugClearAuthConfirmation();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showLogoutConfirmation() {
+        new AlertDialog.Builder(this)
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to logout?")
+            .setPositiveButton("Logout", (dialog, which) -> performLogout())
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    private void performLogout() {
+        // Stop SMS service if running
+        if (serviceToggle.isChecked()) {
+            stopSmsService();
+            serviceToggle.setChecked(false);
+            sharedPreferences.edit().putBoolean("service_enabled", false).apply();
+        }
+
+        // Sign out from Firebase
+        firebaseManager.signOut()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Logout successful");
+                    Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+                    redirectToLogin();
+                } else {
+                    Log.e(TAG, "Logout failed", task.getException());
+                    Toast.makeText(this, "Logout failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+    }
+
+    private void showUserProfile() {
+        FirebaseUser currentUser = firebaseManager.getCurrentUser();
+        if (currentUser != null) {
+            String email = currentUser.getEmail() != null ? currentUser.getEmail() : "Unknown";
+            String displayName = currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Not set";
+            String uid = currentUser.getUid();
+
+            new AlertDialog.Builder(this)
+                .setTitle("User Profile")
+                .setMessage("Email: " + email + "\nDisplay Name: " + displayName + "\nUser ID: " + uid)
+                .setPositiveButton("OK", null)
+                .show();
+        }
+    }
+
+    private void showDebugClearAuthConfirmation() {
+        new AlertDialog.Builder(this)
+            .setTitle("Debug: Clear Authentication")
+            .setMessage("This will clear all authentication data and redirect to login. Use this to test the login flow.")
+            .setPositiveButton("Clear Auth", (dialog, which) -> {
+                clearAuthenticationData();
+                Toast.makeText(this, "Authentication data cleared", Toast.LENGTH_SHORT).show();
+                redirectToLogin();
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    private void setupPreferencesAndToggle() {
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         serviceToggle = findViewById(R.id.serviceToggle);
-        
-        // Check if service is running and update switch state
-        boolean isServiceRunning = preferenceManager.isServiceRunning();
-        serviceToggle.setChecked(isServiceRunning);
-        updateServiceIndicator(isServiceRunning);
+
+        // Initialize switch state from preferences
+        serviceToggle.setChecked(sharedPreferences.getBoolean("service_enabled", false));
 
         serviceToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                if (checkPermissions()) {
+                if (areAllPermissionsGranted()) {
                     startSmsService();
                 } else {
                     showPermissionExplanationDialog();
@@ -71,41 +326,16 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 stopSmsService();
             }
-        });
+            sharedPreferences.edit().putBoolean("service_enabled", isChecked).apply();
 
-        // Start service if it was running before and permissions are granted
-        if (isServiceRunning && checkPermissions()) {
-            startSmsService();
-        }
-    }
-
-    private void setupSocialButtons() {
-        linkedinButton = findViewById(R.id.linkedinButton);
-        githubButton = findViewById(R.id.githubButton);
-
-        linkedinButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Omkar2k5"));
-            startActivity(intent);
-        });
-
-        githubButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Omkar2k5"));
-            startActivity(intent);
+            // Update service status display
+            updateServiceStatus();
         });
     }
 
-    private void updateServiceIndicator(boolean isRunning) {
-        int color = isRunning ? 
-            ContextCompat.getColor(this, R.color.success_green) : 
-            ContextCompat.getColor(this, R.color.error);
-        
-        serviceToggle.setThumbTintList(android.content.res.ColorStateList.valueOf(color));
-    }
-
-    private boolean checkPermissions() {
-        for (String permission : REQUIRED_PERMISSIONS) {
-            if (ContextCompat.checkSelfPermission(this, permission) 
-                != PackageManager.PERMISSION_GRANTED) {
+    private boolean areAllPermissionsGranted() {
+        for (String permission : requiredPermissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
@@ -117,20 +347,30 @@ public class MainActivity extends AppCompatActivity {
             .setTitle("Permissions Required")
             .setMessage("This app needs SMS and notification permissions to monitor your financial transactions through SMS messages. Please grant these permissions to continue.")
             .setPositiveButton("Grant Permissions", (dialog, which) -> requestPermissions())
-            .setNegativeButton("Cancel", (dialog, which) -> 
+            .setNegativeButton("Cancel", (dialog, which) ->
                 Toast.makeText(this, "App requires permissions to function properly", Toast.LENGTH_LONG).show())
             .setCancelable(false)
             .show();
     }
 
     private void requestPermissions() {
-        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(
+            this,
+            requiredPermissions.toArray(new String[0]),
+            PERMISSIONS_REQUEST_CODE
+        );
+    }
+
+    private void initializeServiceIfEnabled() {
+        if (sharedPreferences.getBoolean("service_enabled", false)) {
+            startSmsService();
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE) {
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
             boolean allGranted = true;
             for (int result : grantResults) {
                 if (result != PackageManager.PERMISSION_GRANTED) {
@@ -138,37 +378,96 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
             }
+
             if (allGranted) {
+                Log.d(TAG, "All permissions granted");
                 Toast.makeText(this, "Permissions granted successfully", Toast.LENGTH_SHORT).show();
-                if (preferenceManager.isServiceRunning()) {
-                    serviceToggle.setChecked(true);
-                    startSmsService();
-                }
+                initializeServiceIfEnabled();
             } else {
+                Log.w(TAG, "Some permissions denied");
                 Toast.makeText(this, "App needs all permissions to function properly", Toast.LENGTH_LONG).show();
                 serviceToggle.setChecked(false);
-                preferenceManager.setServiceRunning(false);
-                updateServiceIndicator(false);
+                sharedPreferences.edit().putBoolean("service_enabled", false).apply();
             }
         }
     }
 
-    private void startSmsService() {
-        Intent serviceIntent = new Intent(this, SmsService.class);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        } else {
-            startService(serviceIntent);
+    private boolean isFirebaseInitialized() {
+        try {
+            FirebaseApp.getInstance();
+            return true;
+        } catch (IllegalStateException e) {
+            return false;
         }
-        preferenceManager.setServiceRunning(true);
-        updateServiceIndicator(true);
-        Toast.makeText(this, "SMS monitoring service started", Toast.LENGTH_SHORT).show();
+    }
+
+    private void initializeFirebaseStructure() {
+        try {
+            Log.d(TAG, "Initializing Firebase structure for authenticated user");
+            FirebaseDatabase database = FirebaseDatabase.getInstance("https://skn-hackfest-default-rtdb.asia-southeast1.firebasedatabase.app/");
+            database.setPersistenceEnabled(true);
+
+            FirebaseUser currentUser = firebaseManager.getCurrentUser();
+            if (currentUser != null) {
+                database.getReference("users").child(currentUser.getUid())
+                    .child("lastLogin").setValue(System.currentTimeMillis())
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "User last login updated"))
+                    .addOnFailureListener(e -> Log.e(TAG, "Failed to update last login", e));
+
+                // Test connection
+                database.getReference("users").child(currentUser.getUid())
+                    .child("service_status").setValue("connected_" + System.currentTimeMillis())
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Firebase connection test successful"))
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "Firebase connection test failed", e);
+                        handleError("Database connection failed", e);
+                    });
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error initializing Firebase", e);
+            handleError("Firebase initialization failed", e);
+        }
+    }
+
+    private void startSmsService() {
+        try {
+            Intent serviceIntent = new Intent(this, SmsService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            } else {
+                startService(serviceIntent);
+            }
+            Toast.makeText(this, "SMS monitoring service started", Toast.LENGTH_SHORT).show();
+
+            // Update service status display
+            updateServiceStatus();
+        } catch (Exception e) {
+            Log.e(TAG, "Error starting service: " + e.getMessage());
+            Toast.makeText(this, "Failed to start service", Toast.LENGTH_SHORT).show();
+            serviceToggle.setChecked(false);
+            sharedPreferences.edit().putBoolean("service_enabled", false).apply();
+
+            // Update service status display
+            updateServiceStatus();
+        }
     }
 
     private void stopSmsService() {
-        stopService(new Intent(this, SmsService.class));
-        preferenceManager.setServiceRunning(false);
-        updateServiceIndicator(false);
-        Toast.makeText(this, "SMS monitoring service stopped", Toast.LENGTH_SHORT).show();
+        try {
+            stopService(new Intent(this, SmsService.class));
+            Toast.makeText(this, "SMS monitoring service stopped", Toast.LENGTH_SHORT).show();
+
+            // Update service status display
+            updateServiceStatus();
+        } catch (Exception e) {
+            Log.e(TAG, "Error stopping service: " + e.getMessage());
+            Toast.makeText(this, "Failed to stop service", Toast.LENGTH_SHORT).show();
+        }
     }
-} 
+
+    private void handleError(String message, Exception error) {
+        String errorMessage = message + ": " + error.getMessage();
+        Log.e(TAG, errorMessage, error);
+        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+    }
+}

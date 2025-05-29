@@ -118,7 +118,7 @@
                             android:id="@+id/userNameText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Welcome User"
+                            android:text=""
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -128,7 +128,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="user@example.com"
+                            android:text=""
                             android:textColor="@color/text_secondary"
                             android:textSize="14sp" />
 
@@ -137,7 +137,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Service: Inactive"
+                            android:text=""
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
                     </LinearLayout>
