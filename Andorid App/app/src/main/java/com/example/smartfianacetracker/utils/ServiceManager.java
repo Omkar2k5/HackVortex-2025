@@ -84,7 +84,7 @@ public class ServiceManager {
             .addOnFailureListener(e -> Log.e(TAG, "Failed to create budget", e));
     }
 
-    public void storeDebitTransaction(String accountNumber, String merchantName, double amount, 
+    public void storeDebitTransaction(String accountNumber, String merchantName, double amount,
                                     String transactionMode, String upiId) {
         Map<String, Object> transactionData = new HashMap<>();
         transactionData.put("accountNumber", accountNumber);
@@ -93,11 +93,12 @@ public class ServiceManager {
         transactionData.put("timestamp", System.currentTimeMillis());
         transactionData.put("transactionMode", transactionMode);
         transactionData.put("upiId", upiId);
+        transactionData.put("createdAt", System.currentTimeMillis());
 
         storeTransaction("debit", transactionData);
     }
 
-    public void storeCreditTransaction(String accountNumber, String merchantName, double amount, 
+    public void storeCreditTransaction(String accountNumber, String merchantName, double amount,
                                      String transactionMode, String upiId) {
         Map<String, Object> transactionData = new HashMap<>();
         transactionData.put("accountNumber", accountNumber);
@@ -106,7 +107,8 @@ public class ServiceManager {
         transactionData.put("timestamp", System.currentTimeMillis());
         transactionData.put("transactionMode", transactionMode);
         transactionData.put("upiId", upiId);
+        transactionData.put("createdAt", System.currentTimeMillis());
 
         storeTransaction("credit", transactionData);
     }
-} 
+}
