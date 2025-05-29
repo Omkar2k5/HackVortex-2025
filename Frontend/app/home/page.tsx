@@ -3,6 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowRight, BarChart3, Brain, CreditCard, PiggyBank, TrendingUp, Download, Menu, X } from "lucide-react"
+import { FiHome, FiBarChart, FiCpu, FiUser } from "react-icons/fi"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -62,13 +63,84 @@ function CardContent({ children, className = "", ...props }: any) {
   )
 }
 
-// Simple Navigation component
-function SimpleNavigation() {
-  const router = useRouter()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+// Neumorphism Button Component
+const NeumorphismButton = ({ children, onClick, icon: Icon, href, className = "" }: any) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    }
+    if (href && !onClick) {
+      router.push(href);
+    }
+  };
+
+  const buttonContent = (
+    <button
+      onClick={handleClick}
+      className={`
+        px-4 py-2 rounded-full
+        flex items-center gap-2
+        text-slate-500
+        shadow-[-5px_-5px_10px_rgba(255,_255,_255,_0.8),_5px_5px_10px_rgba(0,_0,_0,_0.25)]
+        transition-all
+        hover:shadow-[-1px_-1px_5px_rgba(255,255,_255,_0.6),_1px_1px_5px_rgba(0,_0,_0,_0.3),inset-2px_-2px_5px_rgba(255,_255,_255,_1),inset_2px_2px_4px_rgba(0,_0,_0,_0.3)]
+        hover:text-violet-500
+        ${className}
+      `}
+    >
+      {Icon && <Icon className="w-4 h-4" />}
+      <span className="text-sm font-medium">{children}</span>
+    </button>
+  );
+
+  // For navigation links without custom onClick, use Link component
+  if (href && !onClick) {
+    return (
+      <Link href={href}>
+        {buttonContent}
+      </Link>
+    );
+  }
+
+  // For buttons with custom onClick or no href
+  return buttonContent;
+};
+
+// Navigation Buttons Container
+const NeumorphismNavigation = () => {
+  const router = useRouter();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+    <div className="flex items-center gap-4">
+      <NeumorphismButton icon={FiHome} href="#features">
+        Features
+      </NeumorphismButton>
+      <NeumorphismButton icon={FiBarChart} href="/dashboard">
+        Dashboard
+      </NeumorphismButton>
+      <NeumorphismButton icon={FiCpu} href="/fingpt">
+        FinGPT
+      </NeumorphismButton>
+      <NeumorphismButton
+        icon={FiUser}
+        onClick={() => router.push('/login')}
+        className="bg-violet-50"
+      >
+        Sign In
+      </NeumorphismButton>
+    </div>
+  );
+};
+
+// Navigation component with neumorphism buttons
+function NeumorphismNavBar() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const router = useRouter()
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b bg-slate-100/95 backdrop-blur supports-[backdrop-filter]:bg-slate-100/60">
       <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Image
@@ -95,71 +167,56 @@ function SimpleNavigation() {
           )}
         </button>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link
-            href="#features"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Features
-          </Link>
-          <Link
-            href="/dashboard"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/fingpt"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            FinGPT
-          </Link>
-          <Button
-            onClick={() => router.push('/login')}
-            size="sm"
-            className="ml-4 hover:scale-105 transition-transform"
-          >
-            Sign In
-          </Button>
-        </nav>
+        {/* Desktop Navigation - Neumorphism Buttons */}
+        <div className="hidden md:block">
+          <NeumorphismNavigation />
+        </div>
       </div>
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-x-0 top-[64px] bg-white border-b md:hidden transform translate-y-0 opacity-100">
+        <div className="fixed inset-x-0 top-[64px] bg-slate-100 border-b md:hidden transform translate-y-0 opacity-100">
           <nav className="container py-4 px-4 space-y-4">
-            <Link
-              href="#features"
-              className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
-              onClick={() => setIsMobileMenuOpen(false)}
+            <NeumorphismButton
+              icon={FiHome}
+              onClick={() => {
+                setIsMobileMenuOpen(false)
+                router.push('#features')
+              }}
+              className="w-full justify-center"
             >
               Features
-            </Link>
-            <Link
-              href="/dashboard"
-              className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
-              onClick={() => setIsMobileMenuOpen(false)}
+            </NeumorphismButton>
+            <NeumorphismButton
+              icon={FiBarChart}
+              onClick={() => {
+                setIsMobileMenuOpen(false)
+                router.push('/dashboard')
+              }}
+              className="w-full justify-center"
             >
               Dashboard
-            </Link>
-            <Link
-              href="/fingpt"
-              className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
-              onClick={() => setIsMobileMenuOpen(false)}
+            </NeumorphismButton>
+            <NeumorphismButton
+              icon={FiCpu}
+              onClick={() => {
+                setIsMobileMenuOpen(false)
+                router.push('/fingpt')
+              }}
+              className="w-full justify-center"
             >
               FinGPT
-            </Link>
-            <Button
+            </NeumorphismButton>
+            <NeumorphismButton
+              icon={FiUser}
               onClick={() => {
                 setIsMobileMenuOpen(false)
                 router.push('/login')
               }}
-              size="sm"
-              className="w-full hover:scale-105 transition-transform"
+              className="w-full justify-center bg-violet-50"
             >
               Sign In
-            </Button>
+            </NeumorphismButton>
           </nav>
         </div>
       )}
@@ -197,9 +254,9 @@ function SplineViewer() {
 export default function HomePage() {
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-gray-900">
-      {/* Simple navigation component */}
-      <SimpleNavigation />
+    <div className="flex flex-col min-h-screen bg-slate-100 text-gray-900">
+      {/* Neumorphism navigation component */}
+      <NeumorphismNavBar />
 
       {/* Hero Section with Full Screen Spline */}
       <section className="relative w-full min-h-screen">
