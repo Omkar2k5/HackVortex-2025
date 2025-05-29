@@ -1,21 +1,8 @@
-"use client"
+import { redirect } from 'next/navigation'
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-
+// Server-side redirect to home page for better SEO and performance
 export default function RootPage() {
-  const router = useRouter()
-
-  useEffect(() => {
-    // Immediately redirect to login page
-    router.push("/login")
-  }, [router])
-
-  // Show loading spinner while redirecting
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-    </div>
-  )
+  // This will be a server-side redirect, much faster than client-side
+  redirect('/home')
 }
 

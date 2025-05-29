@@ -19,7 +19,6 @@ import { TransactionDateFilter } from "@/components/transaction-date-filter"
 const DashboardNav = dynamic(
   () => import("@/components/dashboard-nav").then((mod) => ({ default: mod.DashboardNav })),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="nav" />
   }
 )
@@ -27,7 +26,6 @@ const DashboardNav = dynamic(
 const ExpenseCategories = dynamic(
   () => import("@/components/expense-categories").then((mod) => ({ default: mod.ExpenseCategories })),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="card" />
   }
 )
@@ -35,7 +33,6 @@ const ExpenseCategories = dynamic(
 const ExpenseList = dynamic(
   () => import("@/components/expense-list").then((mod) => ({ default: mod.ExpenseList })),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="list" />
   }
 )

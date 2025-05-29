@@ -29,6 +29,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://prod.spline.design" />
         <link rel="dns-prefetch" href="https://firebase.googleapis.com" />
+        <link rel="preload" href="/images/finance-logo.png" as="image" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="color-scheme" content="light" />
       </head>
       <body className="antialiased">
         <ThemeProvider

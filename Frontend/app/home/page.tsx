@@ -2,16 +2,183 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import dynamic from "next/dynamic"
-import { ArrowRight, BarChart3, Brain, CreditCard, LogOut, PiggyBank, TrendingUp, User, Download, Menu, X } from "lucide-react"
-import { useEffect, useState, Suspense } from "react"
-import { onAuthStateChanged, logOut } from "@/lib/firebase-auth"
+import { ArrowRight, BarChart3, Brain, CreditCard, PiggyBank, TrendingUp, Download, Menu, X } from "lucide-react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { LoadingSkeleton } from "@/components/loading-skeleton"
+
+// Simple Button component
+function Button({ children, onClick, className = "", variant = "default", size = "default", ...props }: any) {
+  const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background"
+  const variants = {
+    default: "bg-primary text-primary-foreground hover:bg-primary/90",
+    outline: "border border-input hover:bg-accent hover:text-accent-foreground"
+  }
+  const sizes = {
+    default: "h-10 py-2 px-4",
+    lg: "h-11 px-8 rounded-md"
+  }
+
+  return (
+    <button
+      className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
+      onClick={onClick}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}
+
+// Simple Card components
+function Card({ children, className = "", ...props }: any) {
+  return (
+    <div className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`} {...props}>
+      {children}
+    </div>
+  )
+}
+
+function CardHeader({ children, className = "", ...props }: any) {
+  return (
+    <div className={`flex flex-col space-y-1.5 p-6 ${className}`} {...props}>
+      {children}
+    </div>
+  )
+}
+
+function CardTitle({ children, className = "", ...props }: any) {
+  return (
+    <h3 className={`text-2xl font-semibold leading-none tracking-tight ${className}`} {...props}>
+      {children}
+    </h3>
+  )
+}
+
+function CardContent({ children, className = "", ...props }: any) {
+  return (
+    <div className={`p-6 pt-0 ${className}`} {...props}>
+      {children}
+    </div>
+  )
+}
+
+// Simple Navigation component
+function SimpleNavigation() {
+  const router = useRouter()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+      <div className="container flex h-16 items-center justify-between px-4">
+        <div className="flex items-center gap-2">
+          <Image
+            src="/images/finance-logo.png"
+            alt="FinanceBuddy Logo"
+            width={40}
+            height={40}
+            className="object-contain"
+            priority
+          />
+          <span className="text-xl font-bold text-gray-900">FinanceBuddy</span>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden p-2 text-gray-600 hover:text-gray-900 transition-colors"
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+        >
+          {isMobileMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </button>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-6">
+          <Link
+            href="#features"
+            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            Features
+          </Link>
+          <Link
+            href="/dashboard"
+            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            Dashboard
+          </Link>
+          <Link
+            href="/fingpt"
+            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            FinGPT
+          </Link>
+          <Button
+            onClick={() => router.push('/login')}
+            size="sm"
+            className="ml-4 hover:scale-105 transition-transform"
+          >
+            Sign In
+          </Button>
+        </nav>
+      </div>
+
+      {/* Mobile Navigation Menu */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-x-0 top-[64px] bg-white border-b md:hidden transform translate-y-0 opacity-100">
+          <nav className="container py-4 px-4 space-y-4">
+            <Link
+              href="#features"
+              className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Features
+            </Link>
+            <Link
+              href="/dashboard"
+              className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/fingpt"
+              className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              FinGPT
+            </Link>
+            <Button
+              onClick={() => {
+                setIsMobileMenuOpen(false)
+                router.push('/login')
+              }}
+              size="sm"
+              className="w-full hover:scale-105 transition-transform"
+            >
+              Sign In
+            </Button>
+          </nav>
+        </div>
+      )}
+
+      {/* Overlay for mobile menu */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/20 md:hidden z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+    </header>
+  )
+}
 
 // Fallback component for 3D visualization
-const SplineViewer = dynamic(
-  () => Promise.resolve(() => (
+function SplineViewer() {
+  return (
     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg">
       <div className="text-center space-y-4">
         <div className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
@@ -23,232 +190,16 @@ const SplineViewer = dynamic(
         </div>
       </div>
     </div>
-  )),
-  {
-    ssr: false,
-    loading: () => <LoadingSkeleton type="spline" />
-  }
-)
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
-// Client-side only component for user profile
-function UserProfile({ user }: { user: any }) {
-  const router = useRouter()
-
-  const handleLogout = async () => {
-    try {
-      await logOut()
-      router.push('/login')
-    } catch (error) {
-      console.error('Error logging out:', error)
-    }
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-          {user.photoURL ? (
-            <Image
-              src={user.photoURL}
-              alt={user.displayName || "User"}
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
-          ) : (
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-              <User className="h-5 w-5 text-primary" />
-            </div>
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <div className="flex items-center justify-start gap-2 p-2">
-          <div className="flex flex-col space-y-1 leading-none">
-            {user.displayName && (
-              <p className="font-medium">{user.displayName}</p>
-            )}
-            {user.email && (
-              <p className="w-[200px] truncate text-sm text-muted-foreground">
-                {user.email}
-              </p>
-            )}
-          </div>
-        </div>
-        <DropdownMenuItem
-          className="flex items-center gap-2 text-red-600 hover:text-red-600 hover:bg-red-50/10 cursor-pointer"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-4 w-4" />
-          <span>Log out</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   )
 }
 
+// Client-side rendered component
 export default function HomePage() {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
-  const [user, setUser] = useState<any>(null)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged((currentUser) => {
-      setUser(currentUser)
-      setIsLoading(false)
-    })
-
-    return () => unsubscribe()
-  }, [])
-
-  // Close mobile menu when route changes
-  useEffect(() => {
-    const handleRouteChange = () => setIsMobileMenuOpen(false)
-    window.addEventListener('popstate', handleRouteChange)
-    return () => window.removeEventListener('popstate', handleRouteChange)
-  }, [])
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-900">
-
-      {/* Navigation */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/images/finance-logo.png"
-              alt="FinanceBuddy Logo"
-              width={40}
-              height={40}
-              className="object-contain"
-              priority
-            />
-            <span className="text-xl font-bold text-gray-900">FinanceBuddy</span>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-gray-600 hover:text-gray-900 transition-colors"
-            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {isMobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="#features"
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Features
-            </Link>
-            <Link
-              href={user ? "/dashboard" : "/login"}
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href={user ? "/fingpt" : "/login"}
-              className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              FinGPT
-            </Link>
-            {!user ? (
-              <Button
-                onClick={() => router.push('/login')}
-                size="sm"
-                className="ml-4 hover:scale-105 transition-transform"
-              >
-                Sign In
-              </Button>
-            ) : (
-              <UserProfile user={user} />
-            )}
-          </nav>
-        </div>
-
-        {/* Mobile Navigation Menu */}
-        <div
-          className={`
-            fixed inset-x-0 top-[64px] bg-white border-b md:hidden
-            transform transition-all duration-300 ease-in-out
-            ${isMobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}
-          `}
-        >
-          <nav className="container py-4 px-4 space-y-4">
-            <Link
-              href="#features"
-              className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Features
-            </Link>
-            <Link
-              href={user ? "/dashboard" : "/login"}
-              className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Dashboard
-            </Link>
-            <Link
-              href={user ? "/fingpt" : "/login"}
-              className="block text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-50"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              FinGPT
-            </Link>
-            {!user ? (
-              <Button
-                onClick={() => {
-                  setIsMobileMenuOpen(false)
-                  router.push('/login')
-                }}
-                size="sm"
-                className="w-full hover:scale-105 transition-transform"
-              >
-                Sign In
-              </Button>
-            ) : (
-              <div className="pt-2 border-t">
-                <UserProfile user={user} />
-              </div>
-            )}
-          </nav>
-        </div>
-
-        {/* Overlay for mobile menu */}
-        {isMobileMenuOpen && (
-          <div
-            className="fixed inset-0 bg-black/20 md:hidden z-40"
-            onClick={() => setIsMobileMenuOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-      </header>
+      {/* Simple navigation component */}
+      <SimpleNavigation />
 
       {/* Hero Section with Full Screen Spline */}
       <section className="relative w-full min-h-screen">
@@ -280,7 +231,7 @@ export default function HomePage() {
                     >
                       Download Android Application <Download className="h-4 w-4" />
                     </Button>
-                    <Link href={user ? "/dashboard" : "/login"} className="w-full sm:w-auto">
+                    <Link href="/dashboard" className="w-full sm:w-auto">
                       <Button
                         size="lg"
                         variant="outline"
@@ -294,9 +245,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="w-full md:w-1/2 h-[50vh] md:h-full relative">
-              <Suspense fallback={<LoadingSkeleton type="spline" />}>
-                <SplineViewer />
-              </Suspense>
+              <SplineViewer />
             </div>
           </div>
         </div>
@@ -474,6 +423,7 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
     </div>
   )
 }

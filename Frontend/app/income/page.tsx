@@ -19,7 +19,6 @@ import { TransactionDateFilter } from "@/components/transaction-date-filter"
 const DashboardNav = dynamic(
   () => import("@/components/dashboard-nav").then((mod) => ({ default: mod.DashboardNav })),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="nav" />
   }
 )
@@ -27,7 +26,6 @@ const DashboardNav = dynamic(
 const IncomeCategories = dynamic(
   () => import("@/components/income-categories").then((mod) => ({ default: mod.IncomeCategories })),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="card" />
   }
 )
@@ -35,7 +33,6 @@ const IncomeCategories = dynamic(
 const IncomeList = dynamic(
   () => import("@/components/income-list").then((mod) => ({ default: mod.IncomeList })),
   {
-    ssr: false,
     loading: () => <LoadingSkeleton type="list" />
   }
 )
