@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -87,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
 
             // Initialize preferences and toggle
             setupPreferencesAndToggle();
+
+            // Start entrance animations
+            startEntranceAnimations();
 
             // Check permissions immediately when app starts
             if (!areAllPermissionsGranted()) {
@@ -214,13 +219,12 @@ public class MainActivity extends AppCompatActivity {
             if (serviceStatusText != null && serviceStatusIcon != null) {
                 if (isServiceEnabled) {
                     serviceStatusText.setText("Service: Active");
-                    serviceStatusText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_light));
-                    serviceStatusIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.holo_green_light));
                 } else {
                     serviceStatusText.setText("Service: Inactive");
-                    serviceStatusText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_light));
-                    serviceStatusIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.holo_red_light));
                 }
+
+                // Use animated color change
+                animateServiceToggle(isServiceEnabled);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error updating service status", e);
@@ -469,5 +473,59 @@ public class MainActivity extends AppCompatActivity {
         String errorMessage = message + ": " + error.getMessage();
         Log.e(TAG, errorMessage, error);
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+    }
+
+    private void startEntranceAnimations() {
+        try {
+            // Animate toolbar
+            if (binding != null && binding.toolbar != null) {
+                Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+                binding.toolbar.startAnimation(slideDown);
+            }
+
+            // Animate user info card
+            Animation bounceIn = AnimationUtils.loadAnimation(this, R.anim.bounce_in);
+            bounceIn.setStartOffset(300);
+            findViewById(R.id.userInfoCard).startAnimation(bounceIn);
+
+            // Animate service toggle
+            Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+            fadeIn.setStartOffset(600);
+            serviceToggle.startAnimation(fadeIn);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error in entrance animations", e);
+        }
+    }
+
+    private void animateServiceToggle(boolean isActive) {
+        try {
+            TextView serviceStatusText = findViewById(R.id.serviceStatusText);
+            ImageView serviceStatusIcon = findViewById(R.id.serviceStatusIcon);
+
+            if (serviceStatusText != null && serviceStatusIcon != null) {
+                // Scale animation for status change
+                Animation scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce_in);
+                serviceStatusText.startAnimation(scaleAnimation);
+                serviceStatusIcon.startAnimation(scaleAnimation);
+
+                // Color transition effect
+                if (isActive) {
+                    serviceStatusText.setTextColor(ContextCompat.getColor(this, R.color.status_active));
+                    serviceStatusIcon.setColorFilter(ContextCompat.getColor(this, R.color.status_active));
+                } else {
+                    serviceStatusText.setTextColor(ContextCompat.getColor(this, R.color.status_inactive));
+                    serviceStatusIcon.setColorFilter(ContextCompat.getColor(this, R.color.status_inactive));
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error in service toggle animation", e);
+        }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

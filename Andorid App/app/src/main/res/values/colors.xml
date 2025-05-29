@@ -42,4 +42,21 @@
     <color name="button_disabled">#4B5563</color>
     <color name="button_text_disabled">#9CA3AF</color>
     <color name="success_green">#4CAF50</color>
+
+    <!-- Animation and UI Colors -->
+    <color name="card_border">#E0E0E0</color>
+    <color name="ripple_color">#20000000</color>
+    <color name="overlay_dark">#80000000</color>
+    <color name="success_light">#C8E6C9</color>
+    <color name="warning_light">#FFE0B2</color>
+    <color name="error_light">#FFCDD2</color>
+
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#667eea</color>
+    <color name="gradient_end">#764ba2</color>
+
+    <!-- Status Colors -->
+    <color name="status_active">#4CAF50</color>
+    <color name="status_inactive">#F44336</color>
+    <color name="status_pending">#FF9800</color>
 </resources>

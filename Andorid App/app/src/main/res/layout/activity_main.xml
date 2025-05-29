@@ -146,9 +146,9 @@
                         android:id="@+id/serviceStatusIcon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_circle"
+                        android:src="@drawable/ic_security"
                         android:contentDescription="Service Status"
-                        android:tint="@android:color/holo_red_light" />
+                        android:tint="@color/status_inactive" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -189,7 +189,7 @@
                             android:layout_height="48dp"
                             android:padding="12dp"
                             android:background="@drawable/circle_background"
-                            android:src="@drawable/ic_credit_card"
+                            android:src="@drawable/ic_wallet"
                             android:contentDescription="Track Expenses" />
 
                         <TextView
@@ -231,7 +231,7 @@
                             android:layout_height="48dp"
                             android:padding="12dp"
                             android:background="@drawable/circle_background"
-                            android:src="@drawable/ic_piggy_bank"
+                            android:src="@drawable/ic_chart"
                             android:contentDescription="Smart Budgeting" />
 
                         <TextView
@@ -273,14 +273,14 @@
                             android:layout_height="48dp"
                             android:padding="12dp"
                             android:background="@drawable/circle_background"
-                            android:src="@drawable/ic_brain"
+                            android:src="@drawable/ic_sms"
                             android:contentDescription="AI Insights" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="AI Insights"
+                            android:text="SMS Monitoring"
                             android:textColor="@color/white"
                             android:textStyle="bold" />
 
@@ -288,7 +288,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Get personalized financial advice"
+                            android:text="Automatic SMS transaction tracking"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -315,14 +315,14 @@
                             android:layout_height="48dp"
                             android:padding="12dp"
                             android:background="@drawable/circle_background"
-                            android:src="@drawable/ic_trending_up"
+                            android:src="@drawable/ic_security"
                             android:contentDescription="Portfolio" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Portfolio"
+                            android:text="Security"
                             android:textColor="@color/white"
                             android:textStyle="bold" />
 
@@ -330,7 +330,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Track your investments in real-time"
+                            android:text="Secure data encryption and privacy"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -365,7 +365,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Hi, I'm Omkar Gondkar, a passionate full-stack developer with expertise in modern web technologies. I created FinanceBuddy to help people manage their finances more effectively using the power of AI and intuitive design."
+                        android:text="Hi, We are Team Deepship, a passionate  developers with expertise in modern web technologies. We created FinanceBuddy to help people manage their finances more effectively using the power of AI and intuitive design."
                         android:textColor="@color/text_secondary"
                         android:lineSpacingExtra="4dp" />
 
@@ -432,7 +432,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:layout_gravity="center"
-                        android:text="© 2024 FinanceBuddy. Built with ❤️ by Omkar Gondkar"
+                        android:text="© 2024 FinanceBuddy. Built with ❤️ by Deepship"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>

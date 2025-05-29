@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -38,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         initializeViews();
         setupFirebase();
         setupGoogleSignIn();
+        startEntranceAnimations();
         checkExistingSession();
     }
 
@@ -190,5 +193,51 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    private void startEntranceAnimations() {
+        // Animate email layout
+        Animation slideInAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+        emailLayout.startAnimation(slideInAnimation);
+
+        // Animate password layout with delay
+        Animation slideInAnimation2 = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+        slideInAnimation2.setStartOffset(200);
+        passwordLayout.startAnimation(slideInAnimation2);
+
+        // Animate buttons with more delay
+        Animation fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        fadeInAnimation.setStartOffset(400);
+        loginButton.startAnimation(fadeInAnimation);
+
+        Animation fadeInAnimation2 = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        fadeInAnimation2.setStartOffset(600);
+        googleButton.startAnimation(fadeInAnimation2);
+    }
+
+    private void animateButtonPress(View button) {
+        Animation scaleUp = AnimationUtils.loadAnimation(this, R.anim.scale_up);
+        Animation scaleDown = AnimationUtils.loadAnimation(this, R.anim.scale_down);
+
+        scaleUp.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                button.startAnimation(scaleDown);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+
+        button.startAnimation(scaleUp);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }
