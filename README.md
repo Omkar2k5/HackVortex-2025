@@ -188,27 +188,23 @@ Smart Finance Tracker revolutionizes personal finance management through a compr
 ## 📸 Screenshots & Demo
 
 ### 🏠 **Dashboard Overview**
-![Dashboard Overview](https://smartfinancetracker.vercel.app/images/dashboard.png)
+![Dashboard Overview](screenshots/Dashboard.png)
 *Comprehensive financial health dashboard with real-time metrics, spending trends, and AI-powered insights*
 
 ### 💳 **Transaction Management**
-![Transaction Management](https://smartfinancetracker.vercel.app/images/transactions.png)
+![Transaction Management](screenshots/Income Transaction Management.png)
 *Advanced transaction tracking with intelligent categorization, search, and filtering capabilities*
 
 ### 📊 **Budget Tracking & Analytics**
-![Budget Analytics](https://smartfinancetracker.vercel.app/images/budget.png)
+![Budget Analytics](screenshots/budget.png)
 *Interactive budget management with progress tracking, alerts, and optimization recommendations*
 
 ### 📄 **AI Statement Processing**
-![Statement Import](https://smartfinancetracker.vercel.app/images/import.png)
+![Statement Import](screenshots/import.png)
 *Intelligent bank statement parsing with automated data extraction and validation*
 
-### 🤖 **FinGPT AI Assistant**
-![FinGPT Assistant](https://smartfinancetracker.vercel.app/images/fingpt.png)
-*Conversational AI financial advisor providing personalized insights and recommendations*
-
 ### 📱 **Mobile Application**
-![Mobile App](https://smartfinancetracker.vercel.app/images/mobile-app.png)
+![Mobile App](screenshots/mobile-app.png)
 *Native Android application with SMS parsing, offline support, and seamless synchronization*
 
 ---
