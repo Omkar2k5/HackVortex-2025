@@ -2,7 +2,7 @@
 
 ## HackVortex 2025 - FinTech Innovation Challenge
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen)](https://skn-hackfest.web.app/fingpt/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen)](https://skn-hackfest.web.app/)
 [![Android APK](https://img.shields.io/badge/Android%20APK-Download-blue)](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
 [![Tech Stack](https://img.shields.io/badge/Tech%20Stack-Next.js%20%7C%20Kotlin%20%7C%20AI-orange)](https://github.com/Omkar2k5/smart-finance-tracker)
 
@@ -182,10 +182,12 @@ Smart Finance Tracker provides a comprehensive cloud-based solution for automate
 ## 🌐 Live Demo & Access
 
 ### **🔗 Web Application**
-**Live Demo:** [https://skn-hackfest.web.app/fingpt/](https://skn-hackfest.web.app/fingpt/)
+**Live Demo:** [https://skn-hackfest.web.app/](https://skn-hackfest.web.app/)
 
 ### **📱 Android Application**
-**Direct Download:** [Download Android APK](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
+**Download Options:**
+- **From Hosted Link:** [Download APK from Website](https://skn-hackfest.web.app/home)
+- **From Android Build:** [Download from Repository](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
 
 ### **🚀 Getting Started**
 1. **Web Access:** Visit the live demo link above to explore all features
@@ -251,7 +253,9 @@ BINANCE_API_KEY=your_binance_key
 ```
 
 #### **For End Users**
-1. **Download APK:** [Download Android APK](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
+1. **Download APK:**
+   - **From Website:** [Download from Hosted Link](https://skn-hackfest.web.app/home)
+   - **From Repository:** [Download from Android Build](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
 2. **Install:** Enable "Unknown Sources" and install APK
 3. **Permissions:** Grant SMS, Storage, and Camera permissions
 4. **Setup:** Sign in with Gmail account and start tracking transactions
@@ -277,14 +281,23 @@ npm run deploy
 
 ---
 
-## 👨‍💻 Developer Information
+## � Team Information
 
-### **About the Creator**
-**Omkar Gondkar** - Full-Stack Developer & FinTech Innovator
+### **About Team DeepShip**
+**Smart Finance Tracker** is built by **Team DeepShip** - A dynamic duo of passionate developers and FinTech innovators.
 
+### **Team Members:**
+
+#### **Omkar Gondkar** - Full-Stack Developer & FinTech Innovator
+**Pushkaraj Palli ** - Full-Stack Developer & Project Lead
 - 🎓 **Expertise:** Modern web technologies, mobile development, AI/ML integration
-- 🚀 **Mission:** Democratizing financial management through intelligent technology
+- 🚀 **Role:** Frontend development, AI integration, project architecture
 - 💡 **Innovation:** Combining AI, cloud computing, and user-centric design
+
+#### **Pushkaraj Palli** - Backend Developer & System Architect
+- 🎓 **Expertise:** Backend systems, cloud infrastructure, database design
+- 🚀 **Role:** Backend development, cloud deployment, system optimization
+- 💡 **Innovation:** Scalable architecture and robust financial data processing
 
 ### **Connect & Collaborate**
 - 📧 **Email:** [gondkaromkar53@gmail.com](mailto:gondkaromkar53@gmail.com)
@@ -310,6 +323,6 @@ npm run deploy
 
 ---
 
-*Built with ❤️ by [Omkar Gondkar](https://github.com/Omkar2k5) for HackVortex 2025*
+*Built with ❤️ by [Deepship](https://github.com/Omkar2k5) for HackVortex 2025*
 
 **© 2025 Smart Finance Tracker. All rights reserved.**
