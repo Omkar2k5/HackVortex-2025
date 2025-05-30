@@ -9,10 +9,19 @@ node_modules/
 
 # Build artifacts
 .next/
-out/_next/static/chunks/
-out/_next/WRVzgVUxy6A0b3ugWQvSY/
+
+# Executable files (forbidden on Firebase Spark plan)
+*.apk
+*.exe
+*.bin
+*.app
+*.deb
+*.rpm
+*.dmg
+*.msi
 
 # Exclude directories without extensions that Firebase treats as executables
+# These are Next.js route directories that don't have file extensions
 out/404
 out/budgeting
 out/dashboard

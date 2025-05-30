@@ -255,7 +255,7 @@ BINANCE_API_KEY=your_binance_key
 #### **For End Users**
 1. **Download APK:**
    - **From Website:** [Download from Hosted Link](https://skn-hackfest.web.app/home)
-   - **From Repository:** [Download from Android Build](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
+   - **From Repository:** [Download from Android Build](https://github.com/Omkar2k5/HackVortex-2025/blob/main/Frontend/public/finacebuddy.apk)
 2. **Install:** Enable "Unknown Sources" and install APK
 3. **Permissions:** Grant SMS, Storage, and Camera permissions
 4. **Setup:** Sign in with Gmail account and start tracking transactions
@@ -281,7 +281,7 @@ npm run deploy
 
 ---
 
-## � Team Information
+##   Team Information
 
 ### **About Team DeepShip**
 **Smart Finance Tracker** is built by **Team DeepShip** - A dynamic duo of passionate developers and FinTech innovators.

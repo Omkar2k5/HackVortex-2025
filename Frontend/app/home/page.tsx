@@ -409,12 +409,7 @@ export default function HomePage() {
                   <div className="flex flex-col sm:flex-row gap-4 pt-6">
                     <Button
                       onClick={() => {
-                        const link = document.createElement('a');
-                        link.href = '/financebuddy.apk';
-                        link.download = 'financebuddy.apk';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
+                        window.open('https://drive.google.com/file/d/1a_Ok_m125aObIQ1_KU1WrFvhMaCVKRy-/view?usp=drive_link', '_blank');
                       }}
                       size="lg"
                       className="w-full sm:w-auto gap-1.5 hover:scale-105 transition-transform duration-300"
