@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useEffect, useState } from "react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "next/navigation"
@@ -102,7 +103,7 @@ export default function BudgetingPage() {
             </Button>
             <Button variant="ghost" size="sm" className="gap-2">
               {user?.photoURL ? (
-                <img
+                <Image
                   src={user.photoURL}
                   width={32}
                   height={32}
@@ -180,9 +181,9 @@ export default function BudgetingPage() {
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
-                          <Progress 
-                            value={percentage} 
-                            className={`h-2 ${budget.budgetReached ? 'bg-rose-100' : ''}`} 
+                          <Progress
+                            value={percentage}
+                            className={`h-2 ${budget.budgetReached ? 'bg-rose-100' : ''}`}
                           />
                           <p className="mt-2 text-xs text-muted-foreground">
                             {percentage.toFixed(1)}% of budget used
@@ -256,9 +257,9 @@ export default function BudgetingPage() {
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
-                          <Progress 
-                            value={percentage} 
-                            className="h-2 bg-gray-100" 
+                          <Progress
+                            value={percentage}
+                            className="h-2 bg-gray-100"
                           />
                           <p className="mt-2 text-xs text-muted-foreground">
                             Final usage: {percentage.toFixed(1)}%

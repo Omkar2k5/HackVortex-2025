@@ -87,11 +87,11 @@ export default function TransactionsPage() {
       <div className="border-b">
         <div className="flex h-16 items-center px-4">
           <Link href="/home" className="flex items-center gap-2">
-            <Image 
-              src="/images/finance-logo.png" 
-              alt="FinanceBuddy Logo" 
-              width={40} 
-              height={40} 
+            <Image
+              src="/images/finance-logo.png"
+              alt="FinanceBuddy Logo"
+              width={40}
+              height={40}
               className="object-contain"
               priority
             />
@@ -104,7 +104,7 @@ export default function TransactionsPage() {
             </Button>
             <Button variant="ghost" size="sm" className="gap-2">
               {user?.photoURL ? (
-                <img
+                <Image
                   src={user.photoURL}
                   width={32}
                   height={32}
@@ -178,4 +178,4 @@ export default function TransactionsPage() {
       </div>
     </div>
   )
-} 
+}

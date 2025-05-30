@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { format, startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths, isWithinInterval } from "date-fns"
 import { Calendar as CalendarIcon, Filter, X } from "lucide-react"
 import { DateRange } from "react-day-picker"
@@ -27,6 +27,10 @@ export function TransactionDateFilter({
   const [dateRange, setDateRange] = useState<DateRange | undefined>()
   const [quickFilter, setQuickFilter] = useState<string>("")
   const [isOpen, setIsOpen] = useState(false)
+
+  // Use ref to store the latest onFilterChange to avoid dependency issues
+  const onFilterChangeRef = useRef(onFilterChange)
+  onFilterChangeRef.current = onFilterChange
 
   // Quick filter options
   const quickFilters = [
@@ -95,15 +99,15 @@ export function TransactionDateFilter({
       })
     }
 
-    onFilterChange(filtered)
-  }, [dateRange, transactions]) // Removed onFilterChange from dependencies to prevent infinite loop
+    onFilterChangeRef.current(filtered)
+  }, [dateRange, transactions])
 
   // Clear all filters
   const clearFilters = useCallback(() => {
     setDateRange(undefined)
     setQuickFilter("")
-    onFilterChange(transactions)
-  }, [onFilterChange, transactions])
+    onFilterChangeRef.current(transactions)
+  }, [transactions])
 
   // Check if any filters are active
   const hasActiveFilters = dateRange?.from || quickFilter
