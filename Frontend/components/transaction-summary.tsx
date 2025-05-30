@@ -1,6 +1,6 @@
 "use client"
 
-import { memo } from "react"
+import React, { memo } from "react"
 import { TrendingUp, TrendingDown, Calendar, Hash } from "lucide-react"
 import { format } from "date-fns"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,10 +12,10 @@ interface TransactionSummaryProps {
   className?: string
 }
 
-function TransactionSummaryComponent({ 
-  transactions, 
-  type, 
-  className 
+function TransactionSummaryComponent({
+  transactions,
+  type,
+  className
 }: TransactionSummaryProps) {
   if (!transactions || transactions.length === 0) {
     return null
@@ -36,11 +36,11 @@ function TransactionSummaryComponent({
 
   const isIncome = type === 'income'
   const icon = isIncome ? TrendingUp : TrendingDown
-  const colorClass = isIncome 
-    ? "text-emerald-600 dark:text-emerald-400" 
+  const colorClass = isIncome
+    ? "text-emerald-600 dark:text-emerald-400"
     : "text-red-600 dark:text-red-400"
-  const bgColorClass = isIncome 
-    ? "bg-emerald-100 dark:bg-emerald-900/20" 
+  const bgColorClass = isIncome
+    ? "bg-emerald-100 dark:bg-emerald-900/20"
     : "bg-red-100 dark:bg-red-900/20"
 
   return (
@@ -78,9 +78,9 @@ function TransactionSummaryComponent({
           </div>
           <div className="text-right">
             <p className={`text-lg font-bold ${colorClass}`}>
-              {isIncome ? '+' : '-'}₹{totalAmount.toLocaleString('en-IN', { 
+              {isIncome ? '+' : '-'}₹{totalAmount.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2 
+                maximumFractionDigits: 2
               })}
             </p>
           </div>
@@ -99,9 +99,9 @@ function TransactionSummaryComponent({
           </div>
           <div className="text-right">
             <p className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-              ₹{averageAmount.toLocaleString('en-IN', { 
+              ₹{averageAmount.toLocaleString('en-IN', {
                 minimumFractionDigits: 2,
-                maximumFractionDigits: 2 
+                maximumFractionDigits: 2
               })}
             </p>
           </div>

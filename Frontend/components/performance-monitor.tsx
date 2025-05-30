@@ -67,8 +67,8 @@ export function PerformanceMonitor() {
     // Measure bundle loading performance
     const measureBundlePerformance = () => {
       const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[]
-      const jsResources = resources.filter(resource => 
-        resource.name.includes('.js') && 
+      const jsResources = resources.filter(resource =>
+        resource.name.includes('.js') &&
         (resource.name.includes('_next') || resource.name.includes('chunks'))
       )
 
@@ -77,7 +77,7 @@ export function PerformanceMonitor() {
       }, 0)
 
       const avgLoadTime = jsResources.reduce((total, resource) => {
-        return total + (resource.loadEnd - resource.loadStart)
+        return total + (resource.responseEnd - resource.responseStart)
       }, 0) / jsResources.length
 
       console.log('Bundle Performance:', {
@@ -106,7 +106,7 @@ export function PerformanceMonitor() {
 
     const measureRouteChange = (url: string) => {
       const startTime = performance.now()
-      
+
       // Use requestIdleCallback if available, otherwise setTimeout
       const callback = () => {
         const endTime = performance.now()
@@ -146,7 +146,7 @@ export function useRenderPerformance(componentName: string) {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production') {
       const startTime = performance.now()
-      
+
       return () => {
         const endTime = performance.now()
         console.log(`${componentName} render time: ${(endTime - startTime).toFixed(2)}ms`)
@@ -159,7 +159,7 @@ export function useRenderPerformance(componentName: string) {
 export function useAsyncPerformance() {
   const measureAsync = (operationName: string, asyncOperation: () => Promise<any>) => {
     const startTime = performance.now()
-    
+
     return asyncOperation().finally(() => {
       const endTime = performance.now()
       console.log(`${operationName} completed in: ${(endTime - startTime).toFixed(2)}ms`)

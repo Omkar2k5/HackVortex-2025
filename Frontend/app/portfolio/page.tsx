@@ -23,10 +23,12 @@ interface CryptoAsset {
   locked_amount: number
 }
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 export default function PortfolioPage() {
   const router = useRouter()
-  const auth = getAuth()
-  const [user, setUser] = useState(auth.currentUser)
+  const [user, setUser] = useState<any>(null)
   const [portfolio, setPortfolio] = useState<CryptoAsset[]>([])
   const [totalValue, setTotalValue] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
@@ -46,37 +48,6 @@ export default function PortfolioPage() {
       return false
     }
   }
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (!currentUser) {
-        router.push('/login')
-        return
-      }
-      setUser(currentUser)
-      const hasApiKeys = await checkCredentials(currentUser.uid)
-      if (hasApiKeys) {
-        fetchPortfolio()
-      }
-      setIsLoading(false)
-    })
-
-    return () => unsubscribe()
-  }, [auth, router, fetchPortfolio])
-
-  useEffect(() => {
-    const updateTimeString = () => {
-      setLastUpdated(new Date().toLocaleTimeString('en-US', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      }))
-    }
-    updateTimeString()
-    const interval = setInterval(updateTimeString, 1000)
-    return () => clearInterval(interval)
-  }, [])
 
   const fetchPortfolio = useCallback(async () => {
     try {
@@ -144,6 +115,38 @@ export default function PortfolioPage() {
       setIsLoading(false)
     }
   }, [user?.uid])
+
+  useEffect(() => {
+    const auth = getAuth()
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (!currentUser) {
+        router.push('/login')
+        return
+      }
+      setUser(currentUser)
+      const hasApiKeys = await checkCredentials(currentUser.uid)
+      if (hasApiKeys) {
+        fetchPortfolio()
+      }
+      setIsLoading(false)
+    })
+
+    return () => unsubscribe()
+  }, [router, fetchPortfolio])
+
+  useEffect(() => {
+    const updateTimeString = () => {
+      setLastUpdated(new Date().toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }))
+    }
+    updateTimeString()
+    const interval = setInterval(updateTimeString, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   const handleCredentialsSaved = () => {
     setHasCredentials(true)

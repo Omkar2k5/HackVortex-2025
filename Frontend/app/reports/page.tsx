@@ -15,7 +15,8 @@ import { DashboardNav } from "@/components/dashboard-nav"
 import { pdf } from '@react-pdf/renderer'
 import { FinancialReportPDF } from '@/components/financial-report-pdf'
 import { useFinance } from "@/hooks/useFinance"
-import { Transaction, MerchantExpense } from "@/types/finance"
+import { Transaction } from "@/lib/firebase-db"
+import { MerchantExpense } from "@/types/finance"
 import {
   ResponsiveContainer,
   PieChart,

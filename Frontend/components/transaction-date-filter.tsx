@@ -80,6 +80,7 @@ export function TransactionDateFilter({
   }
 
   // Filter transactions based on date range
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!transactions) return
 
@@ -96,7 +97,7 @@ export function TransactionDateFilter({
     }
 
     onFilterChange(filtered)
-  }, [dateRange, transactions]) // Removed onFilterChange from dependencies to prevent infinite loop
+  }, [dateRange, transactions]) // Intentionally excluding onFilterChange to prevent infinite loop
 
   // Clear all filters
   const clearFilters = useCallback(() => {

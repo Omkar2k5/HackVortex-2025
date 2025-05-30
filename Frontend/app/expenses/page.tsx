@@ -136,7 +136,7 @@ export default function ExpensesPage() {
             </Button>
             <Button variant="ghost" size="sm" className="gap-2">
               {user?.photoURL ? (
-                <img
+                <Image
                   src={user.photoURL}
                   width={32}
                   height={32}

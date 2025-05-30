@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { IndianRupee, Upload, Loader2 } from "lucide-react"
 import { format } from "date-fns"
 import { extractTextFromPDF, extractTransactions, type Transaction } from "@/lib/pdf-extractor"
@@ -144,7 +145,7 @@ export default function UpdateTransactionsPage() {
             </Link>
             <div className="ml-auto flex items-center gap-4">
               <Button variant="ghost" size="sm" className="gap-2">
-                <img
+                <Image
                   src="/placeholder.svg?height=32&width=32"
                   width={32}
                   height={32}
