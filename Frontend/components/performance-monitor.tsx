@@ -12,32 +12,26 @@ interface PerformanceMetrics {
 
 export function PerformanceMonitor() {
   useEffect(() => {
-    // Only run in production and if performance API is available
     if (process.env.NODE_ENV !== 'production' || typeof window === 'undefined' || !window.performance) {
       return
     }
 
     const metrics: PerformanceMetrics = {}
 
-    // Measure Core Web Vitals
     const measureWebVitals = () => {
-      // First Contentful Paint
       const fcpEntry = performance.getEntriesByName('first-contentful-paint')[0] as PerformanceEntry
       if (fcpEntry) {
         metrics.fcp = fcpEntry.startTime
       }
 
-      // Time to First Byte
       const navigationEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
       if (navigationEntry) {
         metrics.ttfb = navigationEntry.responseStart - navigationEntry.requestStart
       }
 
-      // Log metrics for monitoring
       console.log('Performance Metrics:', metrics)
     }
 
-    // Use Web Vitals library if available, otherwise fallback to Performance API
     if ('web-vitals' in window) {
       // @ts-ignore
       import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
@@ -57,14 +51,12 @@ export function PerformanceMonitor() {
           metrics.ttfb = metric.value
         })
       }).catch(() => {
-        // Fallback to basic performance measurement
         measureWebVitals()
       })
     } else {
       measureWebVitals()
     }
 
-    // Measure bundle loading performance
     const measureBundlePerformance = () => {
       const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[]
       const jsResources = resources.filter(resource =>
@@ -77,7 +69,9 @@ export function PerformanceMonitor() {
       }, 0)
 
       const avgLoadTime = jsResources.reduce((total, resource) => {
-        return total + (resource.responseEnd - resource.fetchStart)
+        // Prefer `responseStart` if available and accurate, else fallback to `fetchStart`
+        const start = resource.responseStart || resource.fetchStart
+        return total + (resource.responseEnd - start)
       }, 0) / jsResources.length
 
       console.log('Bundle Performance:', {
@@ -87,7 +81,6 @@ export function PerformanceMonitor() {
       })
     }
 
-    // Measure after page load
     if (document.readyState === 'complete') {
       setTimeout(() => {
         measureBundlePerformance()
@@ -100,14 +93,12 @@ export function PerformanceMonitor() {
       })
     }
 
-    // Monitor route changes for SPA performance
     const originalPushState = history.pushState
     const originalReplaceState = history.replaceState
 
     const measureRouteChange = (url: string) => {
       const startTime = performance.now()
 
-      // Use requestIdleCallback if available, otherwise setTimeout
       const callback = () => {
         const endTime = performance.now()
         console.log(`Route change to ${url}: ${(endTime - startTime).toFixed(2)}ms`)
@@ -120,28 +111,25 @@ export function PerformanceMonitor() {
       }
     }
 
-    history.pushState = function(...args) {
+    history.pushState = function (...args) {
       measureRouteChange(args[2] as string)
       return originalPushState.apply(this, args)
     }
 
-    history.replaceState = function(...args) {
+    history.replaceState = function (...args) {
       measureRouteChange(args[2] as string)
       return originalReplaceState.apply(this, args)
     }
 
-    // Cleanup
     return () => {
       history.pushState = originalPushState
       history.replaceState = originalReplaceState
     }
   }, [])
 
-  // This component doesn't render anything
   return null
 }
 
-// Hook for measuring component render performance
 export function useRenderPerformance(componentName: string) {
   useEffect(() => {
     if (process.env.NODE_ENV !== 'production') {
@@ -155,7 +143,6 @@ export function useRenderPerformance(componentName: string) {
   })
 }
 
-// Hook for measuring async operations
 export function useAsyncPerformance() {
   const measureAsync = (operationName: string, asyncOperation: () => Promise<any>) => {
     const startTime = performance.now()

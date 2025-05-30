@@ -1,7 +1,15 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { format, startOfMonth, endOfMonth, startOfYear, endOfYear, subMonths, isWithinInterval } from "date-fns"
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfYear,
+  endOfYear,
+  subMonths,
+  isWithinInterval,
+} from "date-fns"
 import { Calendar as CalendarIcon, Filter, X } from "lucide-react"
 import { DateRange } from "react-day-picker"
 
@@ -9,7 +17,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
@@ -22,27 +36,24 @@ interface TransactionDateFilterProps {
 export function TransactionDateFilter({
   onFilterChange,
   transactions,
-  className
+  className,
 }: TransactionDateFilterProps) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>()
   const [quickFilter, setQuickFilter] = useState<string>("")
   const [isOpen, setIsOpen] = useState(false)
 
-  // Use ref to store the latest onFilterChange to avoid dependency issues
   const onFilterChangeRef = useRef(onFilterChange)
   onFilterChangeRef.current = onFilterChange
 
-  // Quick filter options
   const quickFilters = [
     { value: "this-month", label: "This Month" },
     { value: "last-month", label: "Last Month" },
     { value: "last-3-months", label: "Last 3 Months" },
     { value: "last-6-months", label: "Last 6 Months" },
     { value: "this-year", label: "This Year" },
-    { value: "all-time", label: "All Time" }
+    { value: "all-time", label: "All Time" },
   ]
 
-  // Apply quick filter
   const applyQuickFilter = (filterValue: string) => {
     const now = new Date()
     let from: Date | undefined
@@ -83,18 +94,17 @@ export function TransactionDateFilter({
     setQuickFilter(filterValue)
   }
 
-  // Filter transactions based on date range
   useEffect(() => {
     if (!transactions) return
 
     let filtered = [...transactions]
 
     if (dateRange?.from && dateRange?.to) {
-      filtered = transactions.filter(transaction => {
+      filtered = transactions.filter((transaction) => {
         const transactionDate = new Date(transaction.timestamp)
         return isWithinInterval(transactionDate, {
           start: dateRange.from!,
-          end: dateRange.to!
+          end: dateRange.to!,
         })
       })
     }
@@ -102,14 +112,12 @@ export function TransactionDateFilter({
     onFilterChangeRef.current(filtered)
   }, [dateRange, transactions])
 
-  // Clear all filters
   const clearFilters = useCallback(() => {
     setDateRange(undefined)
     setQuickFilter("")
     onFilterChangeRef.current(transactions)
   }, [transactions])
 
-  // Check if any filters are active
   const hasActiveFilters = dateRange?.from || quickFilter
 
   return (
@@ -200,7 +208,7 @@ export function TransactionDateFilter({
             <span className="text-xs text-muted-foreground">Active filters:</span>
             {quickFilter && (
               <Badge variant="secondary" className="text-xs">
-                {quickFilters.find(f => f.value === quickFilter)?.label}
+                {quickFilters.find((f) => f.value === quickFilter)?.label}
               </Badge>
             )}
             {dateRange?.from && dateRange?.to && !quickFilter && (
