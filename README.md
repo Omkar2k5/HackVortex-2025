@@ -2,161 +2,133 @@
 
 ## HackVortex 2025 - FinTech Innovation Challenge
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen)](https://smartfinancetracker.vercel.app)
-[![Android APK](https://img.shields.io/badge/Android%20APK-Download-blue)](https://smartfinancetracker.vercel.app/financebuddy.apk)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen)](https://skn-hackfest.web.app/fingpt/)
+[![Android APK](https://img.shields.io/badge/Android%20APK-Download-blue)](./Frontend/public/financebuddy.apk)
 [![Tech Stack](https://img.shields.io/badge/Tech%20Stack-Next.js%20%7C%20Kotlin%20%7C%20AI-orange)](https://github.com/Omkar2k5/smart-finance-tracker)
 
-> **Revolutionary AI-Powered Financial Management Platform** - Transforming how individuals manage their finances through intelligent automation, real-time analytics, and personalized insights.
+> **Revolutionary AI-Powered Financial Management Platform** - Transforming UPI transaction tracking and financial management through intelligent automation and cloud-based analytics.
 
 ---
 
 ## 🎯 Problem Statement
 
-In today's digital economy, individuals face significant challenges in managing their financial health effectively:
+In India's rapidly growing UPI ecosystem, individuals face critical challenges in managing their financial transactions effectively:
 
-### Core Challenges Identified:
-- **📱 SMS Overload:** Bank transaction SMS alerts are overwhelming and difficult to organize systematically
-- **📊 Fragmented Data:** Financial information scattered across multiple platforms without centralized view
-- **🔍 Poor Visibility:** Lack of comprehensive insights into spending patterns and financial trends
-- **📈 Manual Tracking:** Time-consuming manual entry and categorization of transactions
-- **🎯 Budget Management:** Difficulty in setting, tracking, and maintaining realistic budgets
-- **🤖 Limited Intelligence:** Absence of AI-driven recommendations for financial optimization
-- **📋 Statement Processing:** Manual processing of bank statements leading to errors and inefficiency
-- **💰 Investment Tracking:** Disconnected view of traditional finances and cryptocurrency investments
+### Core Challenges:
+- **📱 UPI Transaction Chaos:** With billions of UPI transactions monthly, users struggle to track and categorize their digital payments
+- **📊 Fragmented Financial Data:** Transaction information scattered across multiple UPI apps without unified tracking
+- **🔍 Limited Transaction Insights:** Lack of comprehensive analytics for spending patterns and financial behavior
+- **📈 Manual Financial Management:** Time-consuming manual entry and categorization of transactions
+- **🤖 Absence of Intelligence:** No AI-driven insights for financial optimization and budget recommendations
+- **📋 Statement Processing Complexity:** Manual processing of bank statements leading to errors and inefficiency
+- **💰 Investment Disconnect:** Separate tracking of traditional finances and modern digital assets
 
-### Impact on Users:
-- Poor budgeting habits and financial planning
-- Missed opportunities for savings and investment optimization
-- Increased financial stress due to lack of clarity
-- Time wastage in manual financial data management
-- Suboptimal financial decision-making
+### Real-World Impact:
+In a world where UPI transactions dominate daily commerce, automated logging and intelligent analysis of financial data is crucial for personal financial health and informed decision-making.
 
 ---
 
 ## 💡 Approach & Solution
 
-Smart Finance Tracker revolutionizes personal finance management through a comprehensive AI-powered ecosystem that addresses every aspect of financial wellness:
+Smart Finance Tracker provides a comprehensive cloud-based solution for automated UPI transaction tracking and intelligent financial management:
 
 ### 🔧 Core Solution Architecture:
 
-#### 1. **Intelligent SMS Processing Engine**
-- **Advanced NLP Parsing:** Utilizes sophisticated natural language processing to extract transaction details from bank SMS alerts
-- **Multi-Bank Compatibility:** Supports 15+ major Indian banks including SBI, HDFC, ICICI, Kotak, Axis, and more
+#### 1. **Automated UPI Transaction Logging**
+- **SMS-Based Parsing:** Intelligent extraction of transaction details from bank SMS notifications
+- **Multi-Bank Support:** Compatible with 15+ major Indian banks and UPI providers
 - **Real-time Processing:** Instant transaction capture and categorization as SMS arrives
-- **Smart Validation:** AI-powered validation to ensure data accuracy and prevent duplicates
+- **Cloud Synchronization:** Seamless data sync across all devices using cloud infrastructure
 
 #### 2. **AI-Powered Bank Statement Analysis**
-- **Document Intelligence:** Advanced OCR and AI algorithms to process PDF bank statements
-- **Automated Extraction:** Intelligent extraction of transaction data, dates, amounts, and merchant information
-- **Pattern Recognition:** Machine learning models to identify and categorize transaction types
-- **Bulk Import:** Process months of historical data in minutes with 99.7% accuracy
+- **Document Intelligence:** Advanced OCR and AI algorithms for PDF bank statement processing
+- **Automated Data Extraction:** Intelligent parsing of transaction data, dates, amounts, and merchant information
+- **Historical Data Import:** Process months of banking history in minutes with high accuracy
+- **Pattern Recognition:** Machine learning models for transaction categorization and trend analysis
 
-#### 3. **Cloud-Native Data Infrastructure**
-- **Scalable Architecture:** Serverless cloud infrastructure supporting millions of transactions
-- **Real-time Synchronization:** Instant data sync across all devices and platforms
-- **Advanced Security:** Enterprise-grade encryption and security protocols
-- **Backup & Recovery:** Automated data backup with point-in-time recovery capabilities
+#### 3. **Cloud-Native Infrastructure**
+- **Scalable Architecture:** Serverless cloud backend supporting millions of transactions
+- **Real-time Synchronization:** Instant data sync across web and mobile platforms
+- **Enterprise Security:** Advanced encryption and security protocols for financial data
+- **Automated Backup:** Cloud-based data backup with point-in-time recovery
 
 #### 4. **Intelligent Financial Dashboard**
-- **Interactive Visualizations:** Dynamic charts, graphs, and financial health indicators
-- **Predictive Analytics:** AI-driven spending forecasts and budget recommendations
-- **Custom Reporting:** Generate comprehensive financial reports with exportable data
-- **Goal Tracking:** Set and monitor financial goals with intelligent milestone tracking
+- **Interactive Analytics:** Dynamic charts and financial health indicators
+- **Predictive Insights:** AI-driven spending forecasts and budget recommendations
+- **Custom Reporting:** Comprehensive financial reports with CA-ready analytics
+- **Goal Tracking:** Smart milestone tracking for savings and financial objectives
 
 #### 5. **FinGPT - AI Financial Assistant**
-- **Personalized Insights:** AI-powered analysis of spending patterns and financial behavior
-- **Smart Recommendations:** Contextual advice for budget optimization and savings opportunities
-- **Investment Guidance:** Intelligent suggestions for portfolio diversification and growth
-- **Financial Education:** Personalized learning content based on user's financial profile
-
-#### 6. **Cryptocurrency Integration**
-- **Binance API Integration:** Real-time tracking of cryptocurrency investments and portfolios
-- **Unified View:** Combined traditional and digital asset management in single dashboard
-- **Market Analytics:** Live crypto market data and portfolio performance metrics
-- **Tax Optimization:** Automated calculation of crypto gains/losses for tax reporting
+- **Personalized Analysis:** AI-powered insights into spending patterns and financial behavior
+- **Smart Recommendations:** Contextual advice for budget optimization and savings
+- **Investment Guidance:** Intelligent portfolio suggestions and financial planning
+- **Educational Content:** Personalized financial literacy based on user profile
 
 ---
 
 ## ✨ Features & Capabilities
 
-### 🤖 **AI-Powered Automation**
-- **Smart Transaction Parsing:** Automatically extracts and categorizes transactions from SMS and statements
-- **Intelligent Categorization:** Machine learning-based expense categorization with 95%+ accuracy
-- **Predictive Budgeting:** AI-driven budget recommendations based on spending patterns
-- **Anomaly Detection:** Automatic identification of unusual transactions and spending spikes
-- **Trend Analysis:** Advanced analytics to identify financial trends and opportunities
+### 🤖 **Automated Transaction Management**
+- **Smart SMS Parsing:** Automatically extracts UPI and bank transaction details from SMS
+- **Intelligent Categorization:** AI-based expense categorization with 95%+ accuracy
+- **Manual Transaction Entry:** Backup option for transactions without SMS notifications
+- **Cloud Storage:** All transaction data securely stored and synchronized in cloud
+- **Multi-Device Access:** Access your financial data from any device, anywhere
 
-### 📊 **Comprehensive Financial Management**
-- **Real-time Dashboard:** Live financial overview with key metrics and insights
-- **Transaction History:** Detailed, searchable transaction logs with advanced filtering
-- **Budget Management:** Create, track, and optimize budgets across multiple categories
-- **Income Tracking:** Monitor income sources with growth analysis and projections
-- **Expense Analytics:** Deep dive into spending patterns with merchant-wise breakdowns
-- **Financial Health Score:** AI-calculated score indicating overall financial wellness
+### 📊 **Comprehensive Financial Analytics**
+- **Real-time Dashboard:** Live overview of financial health and key metrics
+- **Transaction History:** Detailed, searchable logs with advanced filtering options
+- **Budget Management:** Create and track budgets across multiple spending categories
+- **Income Tracking:** Monitor income sources with growth analysis
+- **Expense Analytics:** Deep insights into spending patterns and merchant analysis
+- **Financial Reports:** Generate detailed reports suitable for CA consultation
 
 ### 📱 **Cross-Platform Experience**
 - **Web Application:** Feature-rich Next.js web app with responsive design
-- **Android Application:** Native Kotlin app with SMS parsing and offline capabilities
-- **Progressive Web App:** PWA support for mobile-first experience
-- **API Integration:** RESTful APIs for third-party integrations and extensions
+- **Android Application:** Native Kotlin app with SMS parsing capabilities
+- **Cloud Synchronization:** Seamless data sync between web and mobile platforms
+- **Offline Capability:** Mobile app works offline with cloud sync when connected
 
 ### 🔐 **Security & Privacy**
-- **End-to-End Encryption:** Military-grade encryption for all data transmission and storage
-- **OAuth Authentication:** Secure login with Google, Facebook, and email options
+- **End-to-End Encryption:** Military-grade encryption for all financial data
+- **Secure Authentication:** Google OAuth and secure login options
 - **Privacy Controls:** Granular privacy settings and data export capabilities
-- **Compliance:** GDPR and financial data protection compliance
-
-### 📈 **Advanced Analytics & Reporting**
-- **Interactive Charts:** Dynamic visualizations using Recharts and D3.js
-- **Custom Reports:** Generate PDF reports with charts, analytics, and insights
-- **Export Capabilities:** Export data in multiple formats (CSV, Excel, PDF)
-- **Comparative Analysis:** Month-over-month and year-over-year financial comparisons
-- **Goal Tracking:** Visual progress tracking for savings and financial goals
-
-### 🌐 **Integration Ecosystem**
-- **Bank API Integration:** Direct integration with participating banks for real-time data
-- **Cryptocurrency Tracking:** Binance API integration for crypto portfolio management
-- **Third-party Services:** Integration with popular financial services and tools
-- **Webhook Support:** Real-time notifications and data synchronization
+- **Compliance:** Financial data protection and privacy compliance
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## 🛠️ Tech Stack
 
 ### **Frontend Technologies**
 ```
 🌐 Web Application:
-├── Next.js 13 (App Router) - React framework with server-side rendering
+├── Next.js 13 (App Router) - React framework with SSR
 ├── TypeScript - Type-safe development
 ├── TailwindCSS - Utility-first CSS framework
 ├── Shadcn/ui - Modern component library
-├── Framer Motion - Advanced animations and interactions
 ├── Recharts - Data visualization and charting
-└── React Hook Form - Form management with validation
+└── React Hook Form - Form management
 
 📱 Mobile Application:
 ├── Kotlin - Modern Android development
 ├── Jetpack Compose - Declarative UI toolkit
 ├── Room Database - Local data persistence
 ├── Retrofit - HTTP client for API communication
-├── Coroutines - Asynchronous programming
 └── Material Design 3 - Modern UI components
 ```
 
-### **Backend & Infrastructure**
+### **Backend & Cloud Infrastructure**
 ```
 ☁️ Cloud Services:
 ├── Serverless Functions - Auto-scaling compute
 ├── Real-time Database - Live data synchronization
 ├── Cloud Storage - Secure file storage
 ├── Authentication Service - User management
-├── Cloud Functions - Event-driven processing
-└── CDN - Global content delivery
+└── Cloud Functions - Event-driven processing
 
 🔗 APIs & Integrations:
 ├── OpenRouter API - AI/ML model access
-├── Binance API - Cryptocurrency data
-├── Bank APIs - Direct bank integrations
+├── Binance API - Cryptocurrency tracking
 ├── SMS Gateway - Transaction notifications
 └── Email Service - User communications
 ```
@@ -168,19 +140,7 @@ Smart Finance Tracker revolutionizes personal finance management through a compr
 ├── Natural Language Processing - SMS parsing
 ├── Computer Vision - Document processing
 ├── Machine Learning - Pattern recognition
-├── Predictive Analytics - Financial forecasting
-└── Recommendation Engine - Personalized insights
-```
-
-### **Development & Deployment**
-```
-🚀 DevOps:
-├── Vercel - Frontend deployment and hosting
-├── GitHub Actions - CI/CD pipelines
-├── Docker - Containerization
-├── Monitoring - Application performance tracking
-├── Analytics - User behavior insights
-└── Error Tracking - Real-time error monitoring
+└── Predictive Analytics - Financial forecasting
 ```
 
 ---
@@ -220,78 +180,33 @@ Smart Finance Tracker revolutionizes personal finance management through a compr
 ## 🌐 Live Demo & Access
 
 ### **🔗 Web Application**
-**Primary Demo:** [https://smartfinancetracker.vercel.app](https://smartfinancetracker.vercel.app)
-
-**Alternative Mirrors:**
-- Production: [https://financebuddy-pro.vercel.app](https://smartfinancetracker.vercel.app)
-- Staging: [https://financebuddy-staging.vercel.app](https://smartfinancetracker.vercel.app)
-- Beta: [https://financebuddy-beta.vercel.app](https://smartfinancetracker.vercel.app)
+**Live Demo:** [https://skn-hackfest.web.app/fingpt/](https://skn-hackfest.web.app/fingpt/)
 
 ### **📱 Android Application**
-**Direct Download:** [FinanceBuddy.apk](https://smartfinancetracker.vercel.app/financebuddy.apk)
+**Direct Download:** [Download Android APK](./Frontend/public/financebuddy.apk)
 
-**Features Available in Demo:**
-- ✅ Full dashboard functionality
-- ✅ Transaction management
-- ✅ Budget tracking
-- ✅ AI-powered insights
-- ✅ Report generation
-- ✅ FinGPT assistant
-- ⚠️ SMS parsing (requires Android app installation)
-- ⚠️ Bank statement upload (limited in demo)
+### **🚀 Getting Started**
+1. **Web Access:** Visit the live demo link above to explore all features
+2. **Android Setup:**
+   - Download the APK from the link above
+   - Install on your Android device
+   - Sign in with the same Gmail account used on web
+   - Grant SMS permissions for automatic transaction logging
+3. **UPI Transaction Tracking:** All your UPI transactions will be automatically tracked and logged in the cloud
+4. **Manual Entry:** For transactions without SMS, use the manual transaction entry feature
+5. **Bank Statement Import:** Upload bank statements for comprehensive financial history analysis
+6. **CA Reports:** Generate detailed financial reports suitable for CA consultation
 
-*Note: The demo includes sample data to showcase all features. For full functionality including SMS parsing and real bank integrations, please follow the setup instructions below.*
+### **💡 Use Case Scenario**
+In today's UPI-dominated world, automated logging of all transactions is crucial. When SMS notifications are unavailable, users can manually add transactions or import complete banking history using our bank statement parsing feature. The system generates comprehensive reports with various charts and analytics that can be directly sent to CAs for financial consultation.
 
 ---
 
-## 🚀 Installation & Setup
+## 🚀 Run Instructions
 
-### **📋 Prerequisites**
+### **🌐 Web Application**
 
-Before setting up the Smart Finance Tracker, ensure you have the following installed:
-
-```bash
-# Required Software
-├── Node.js 18+ (LTS recommended)
-├── npm or yarn package manager
-├── Android Studio (for mobile development)
-├── Git (for version control)
-└── Cloud account (for backend services)
-```
-
-### **☁️ Cloud Infrastructure Setup**
-
-#### 1. **Database Configuration**
-```bash
-# Create cloud project
-1. Navigate to your cloud provider console
-2. Create new project: "smart-finance-tracker"
-3. Enable Real-time Database in native mode
-4. Configure security rules for authenticated users
-5. Set up automated backups and monitoring
-```
-
-#### 2. **Authentication Services**
-```bash
-# Enable authentication providers
-├── Google OAuth 2.0
-├── Email/Password authentication
-├── Facebook Login (optional)
-└── Apple Sign-In (optional)
-```
-
-#### 3. **API Keys & Configuration**
-```bash
-# Required API keys
-├── OpenRouter API Key (for AI features)
-├── Binance API Key (for crypto tracking)
-├── Cloud Storage credentials
-└── SMS Gateway API (for notifications)
-```
-
-### **🌐 Frontend Setup (Next.js)**
-
-#### 1. **Clone & Install**
+#### **Quick Start**
 ```bash
 # Clone the repository
 git clone https://github.com/Omkar2k5/smart-finance-tracker.git
@@ -299,183 +214,64 @@ cd smart-finance-tracker/Frontend
 
 # Install dependencies
 npm install
-# or
-yarn install
+
+# Start development server
+npm run dev
+
+# Access at http://localhost:3000
 ```
 
-#### 2. **Environment Configuration**
+#### **Environment Setup**
 Create `.env.local` file in the Frontend directory:
-
 ```env
 # Cloud Configuration
 NEXT_PUBLIC_API_KEY=your_cloud_api_key
 NEXT_PUBLIC_AUTH_DOMAIN=your_auth_domain
 NEXT_PUBLIC_PROJECT_ID=your_project_id
-NEXT_PUBLIC_STORAGE_BUCKET=your_storage_bucket
-NEXT_PUBLIC_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_APP_ID=your_app_id
-NEXT_PUBLIC_MEASUREMENT_ID=your_measurement_id
 
-# AI & ML Services
+# AI Services
 OPENROUTER_API_KEY=your_openrouter_key
 DEEPSEEK_API_KEY=your_deepseek_key
 
-# Cryptocurrency Integration
+# Binance API (optional)
 BINANCE_API_KEY=your_binance_key
-BINANCE_SECRET_KEY=your_binance_secret
-
-# Additional Services
-SMS_GATEWAY_API=your_sms_api
-EMAIL_SERVICE_KEY=your_email_key
 ```
 
-#### 3. **Development Server**
-```bash
-# Start development server
-npm run dev
-# or
-yarn dev
+### **📱 Android Application**
 
-# Build for production
-npm run build
-npm start
-
-# Performance analysis
-npm run analyze
-```
-
-#### 4. **Access Application**
-- **Local Development:** [http://localhost:3000](http://localhost:3000)
-- **Production Build:** Optimized for deployment
-
-### **📱 Android Setup (Kotlin)**
-
-#### 1. **Project Setup**
+#### **Development Setup**
 ```bash
 # Open Android Studio
 1. Open "Andorid App" directory in Android Studio
 2. Sync project with Gradle files
-3. Download required SDK components
-4. Configure build variants (debug/release)
+3. Add google-services.json to app/ directory
+4. Build and run on device/emulator
 ```
 
-#### 2. **Configuration Files**
+#### **For End Users**
+1. **Download APK:** [Download Android APK](./Frontend/public/financebuddy.apk)
+2. **Install:** Enable "Unknown Sources" and install APK
+3. **Permissions:** Grant SMS, Storage, and Camera permissions
+4. **Setup:** Sign in with Gmail account and start tracking transactions
+
+### **🔧 Production Deployment**
+
+#### **Web Deployment**
 ```bash
-# Add configuration files
-├── google-services.json (in app/ directory)
-├── local.properties (SDK paths)
-└── keystore.jks (for release builds)
+# Build for production
+npm run build
+
+# Deploy to Vercel/Netlify
+npm run deploy
 ```
 
-#### 3. **Permissions & Features**
-```xml
-<!-- Required permissions in AndroidManifest.xml -->
-<uses-permission android:name="android.permission.READ_SMS" />
-<uses-permission android:name="android.permission.RECEIVE_SMS" />
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-<uses-permission android:name="android.permission.CAMERA" />
-<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-```
-
-#### 4. **Build & Deploy**
+#### **Android Release**
 ```bash
-# Debug build
-./gradlew assembleDebug
-
-# Release build
+# Generate release APK
 ./gradlew assembleRelease
 
-# Install on device
-./gradlew installDebug
+# APK location: app/build/outputs/apk/release/
 ```
-
-### **🔧 Advanced Configuration**
-
-#### **Performance Optimization**
-```bash
-# Enable performance features
-├── Bundle analysis and optimization
-├── Image optimization and lazy loading
-├── Code splitting and tree shaking
-├── Service worker for offline support
-└── CDN configuration for global delivery
-```
-
-#### **Security Hardening**
-```bash
-# Security measures
-├── Environment variable encryption
-├── API rate limiting and throttling
-├── Input validation and sanitization
-├── CORS configuration
-└── Security headers implementation
-```
-
-#### **Monitoring & Analytics**
-```bash
-# Setup monitoring
-├── Error tracking and reporting
-├── Performance monitoring
-├── User analytics and behavior tracking
-├── API usage monitoring
-└── Real-time alerts and notifications
-```
-
-### **🧪 Testing & Quality Assurance**
-
-```bash
-# Run test suites
-npm run test              # Unit tests
-npm run test:integration  # Integration tests
-npm run test:e2e         # End-to-end tests
-npm run lint             # Code linting
-npm run type-check       # TypeScript validation
-```
-
-### **📱 Mobile App Installation**
-
-#### **For End Users:**
-1. **Direct APK Download:** [FinanceBuddy.apk](https://smartfinancetracker.vercel.app/financebuddy.apk)
-2. **Enable "Unknown Sources" in Android settings**
-3. **Install the APK file**
-4. **Grant required permissions (SMS, Storage, Camera)**
-5. **Complete initial setup and authentication**
-
-#### **SMS Parsing Setup:**
-- Grant SMS read permissions when prompted
-- Allow the app to be the default SMS handler (optional)
-- Configure bank SMS sender filtering
-- Test with sample transaction SMS
-
-### **🔍 Troubleshooting**
-
-#### **Common Issues:**
-```bash
-# Build failures
-├── Clear node_modules and reinstall
-├── Update Node.js to latest LTS
-├── Check environment variables
-└── Verify API key configurations
-
-# Authentication issues
-├── Verify cloud project configuration
-├── Check OAuth redirect URLs
-├── Validate API key permissions
-└── Clear browser cache and cookies
-
-# Mobile app issues
-├── Ensure proper permissions granted
-├── Check device compatibility (Android 7+)
-├── Verify internet connectivity
-└── Clear app data and restart
-```
-
-#### **Support & Documentation:**
-- **Technical Documentation:** [Wiki](https://github.com/Omkar2k5/smart-finance-tracker/wiki)
-- **API Reference:** [API Docs](https://smartfinancetracker.vercel.app/docs)
-- **Community Support:** [Discussions](https://github.com/Omkar2k5/smart-finance-tracker/discussions)
-- **Bug Reports:** [Issues](https://github.com/Omkar2k5/smart-finance-tracker/issues)
 
 ---
 
@@ -493,32 +289,6 @@ npm run type-check       # TypeScript validation
 - 📱 **Phone:** +91 8855916700
 - 💼 **LinkedIn:** [linkedin.com/in/og25](https://www.linkedin.com/in/og25/)
 - 🐙 **GitHub:** [github.com/Omkar2k5](https://github.com/Omkar2k5)
-- 🌐 **Portfolio:** [omkar-portfolio.vercel.app](https://smartfinancetracker.vercel.app)
-
-### **Project Stats**
-- ⭐ **GitHub Stars:** Growing community of contributors
-- 🍴 **Forks:** Open for collaboration and improvements
-- 📈 **Active Development:** Regular updates and feature additions
-- 🌍 **Global Reach:** Users across multiple countries
-
----
-
-## 📄 License & Legal
-
-### **Open Source License**
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-### **Terms of Use**
-- ✅ Free for personal and educational use
-- ✅ Commercial use with attribution
-- ✅ Modification and distribution allowed
-- ⚠️ No warranty or liability coverage
-
-### **Privacy & Data Protection**
-- 🔒 **GDPR Compliant:** Full data protection compliance
-- 🛡️ **Data Encryption:** End-to-end encryption for all user data
-- 🚫 **No Data Selling:** User data is never sold or shared
-- 📋 **Transparency:** Clear privacy policy and data usage
 
 ---
 
@@ -531,13 +301,13 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - **Financial Advisors** - For domain expertise and guidance
 
 ### **Technology Partners**
-- **Vercel** - Deployment and hosting platform
-- **Cloud Providers** - Scalable infrastructure services
+- **Cloud Infrastructure** - Scalable serverless architecture
 - **AI/ML Services** - Advanced language models and processing
 - **Financial APIs** - Real-time data and integrations
+- **Development Tools** - Modern development and deployment platforms
 
 ---
 
 *Built with ❤️ by [Omkar Gondkar](https://github.com/Omkar2k5) for HackVortex 2025*
 
-**© 2024 Smart Finance Tracker. All rights reserved.**
+**© 2025 Smart Finance Tracker. All rights reserved.**

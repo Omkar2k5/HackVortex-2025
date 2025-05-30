@@ -32,29 +32,70 @@ export default function FinGPTPage() {
     ]);
 
     try {
-      const response = await fetch("/api/fingpt", {
+      // Prepare conversation history for Gemini API format
+      const conversationHistory = chatHistory.slice(-10).map((msg) => ({
+        role: msg.role === "assistant" ? "model" : "user",
+        parts: [{ text: msg.content }]
+      }));
+
+      // Add system instruction and current user message
+      const contents = [
+        ...conversationHistory,
+        {
+          role: "user",
+          parts: [{
+            text: `You are FinGPT, a helpful AI assistant focused on financial topics. Provide clear, accurate, and helpful financial advice and information. User question: ${userMessage}`
+          }]
+        }
+      ];
+
+      // Make direct call to Google Gemini API
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCkApetwCEZuzgMHInDtYuWK_v41jTA-PI`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: userMessage,
-          history: chatHistory.slice(-10) // Only send last 10 messages for context
+          contents: contents,
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 1000,
+          },
+          safetySettings: [
+            {
+              category: "HARM_CATEGORY_HARASSMENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_HATE_SPEECH",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            }
+          ]
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || `HTTP error! status: ${response.status}`);
-      }
-      
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to get response from FinGPT');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Gemini API error: ${response.status} - ${errorData.error?.message || response.statusText || 'Unknown error'}`);
       }
 
-      const assistantResponse = data.response;
-      
+      const data = await response.json();
+      const assistantResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!assistantResponse) {
+        throw new Error('No response from the AI model');
+      }
+
       setChatHistory((prev) => [
         ...prev,
         { role: "assistant", content: assistantResponse }
@@ -109,7 +150,7 @@ export default function FinGPTPage() {
                 <h2 className="text-2xl font-bold mb-2">Welcome to FinGPT</h2>
                 <p className="mb-1">Your AI-powered financial assistant</p>
                 <p className="text-sm">Ask me about financial markets, investment strategies, or economic trends!</p>
-                <p className="text-xs mt-4 text-gray-400">Using OpenRouter with DeepSeek model</p>
+                <p className="text-xs mt-4 text-gray-400">Powered by Google Gemini 2.0 Flash</p>
               </motion.div>
             ) : (
               chatHistory.map((msg, index) => (
@@ -157,8 +198,8 @@ export default function FinGPTPage() {
               className="w-full pr-12 py-3 rounded-lg border-gray-200"
               disabled={isLoading}
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isLoading}
               className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100"
               variant="ghost"

@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Optimize images
+  // Enable static export for Firebase Hosting
+  output: 'export',
+  trailingSlash: true,
+  distDir: 'out',
+
+  // Optimize images for static export
   images: {
+    unoptimized: true, // Required for static export
     remotePatterns: [
       {
         protocol: 'https',
@@ -16,12 +22,6 @@ const nextConfig = {
         pathname: '/**',
       }
     ],
-    formats: ['image/webp', 'image/avif'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
-    dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
   // Enable experimental features for better performance
@@ -50,60 +50,8 @@ const nextConfig = {
   // Enable gzip compression
   compress: true,
 
-  // Webpack configuration for bundle optimization
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Optimize bundle splitting
-    if (!dev && !isServer) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          default: false,
-          vendors: false,
-          // Firebase chunk
-          firebase: {
-            name: 'firebase',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](firebase|@firebase)[\\/]/,
-            priority: 40,
-          },
-          // UI components chunk
-          ui: {
-            name: 'ui',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](@radix-ui|@headlessui|lucide-react)[\\/]/,
-            priority: 30,
-          },
-          // Charts chunk
-          charts: {
-            name: 'charts',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](recharts|d3|victory)[\\/]/,
-            priority: 25,
-          },
-          // Animation chunk
-          animations: {
-            name: 'animations',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](framer-motion|@splinetool)[\\/]/,
-            priority: 20,
-          },
-          // Common vendor chunk
-          vendor: {
-            name: 'vendor',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/]/,
-            priority: 10,
-          },
-        },
-      }
-    }
-
-    // Optimize imports
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      // Remove lodash alias to fix recharts compatibility
-    }
-
+  // Simplified webpack configuration
+  webpack: (config) => {
     return config
   },
 

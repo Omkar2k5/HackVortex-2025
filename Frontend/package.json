@@ -5,14 +5,16 @@
   "scripts": {
     "dev": "next dev",
     "dev:turbo": "next dev --turbo",
-    "build": "next build",
-    "build:clean": "rm -rf .next && next build",
-    "build:analyze": "ANALYZE=true next build",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next build",
+    "build:export": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next build",
+    "build:clean": "rmdir /s /q .next 2>nul & rmdir /s /q out 2>nul & cross-env NODE_OPTIONS=--max-old-space-size=4096 next build",
+    "build:simple": "next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "analyze": "node scripts/analyze-bundle.js",
-    "perf:analyze": "npm run build && npm run analyze"
+    "perf:analyze": "npm run build && npm run analyze",
+    "firebase:deploy": "npm run build:export && firebase deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -56,6 +58,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "8.5.1",
     "firebase": "^11.5.0",
+    "firebase-tools": "^14.5.0",
     "framer-motion": "^12.5.0",
     "html-to-image": "^1.11.13",
     "input-otp": "1.4.1",
@@ -82,6 +85,7 @@
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cross-env": "^7.0.3",
     "eslint": "^8",
     "eslint-config-next": "^15.3.1",
     "postcss": "^8",
