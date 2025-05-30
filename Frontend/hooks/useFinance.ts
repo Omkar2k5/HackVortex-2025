@@ -129,7 +129,7 @@ export const useFinance = () => {
     };
 
     handleUserData();
-  }, [user, isClient, loadData]);
+  }, [user, isClient]); // Removed loadData to prevent circular dependency
 
   // Budget operations
   const createBudget = async (budget: Omit<Budget, 'id' | 'budgetReached' | 'createdAt' | 'isActive' | 'spent'>) => {
