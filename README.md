@@ -3,7 +3,7 @@
 ## HackVortex 2025 - FinTech Innovation Challenge
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen)](https://skn-hackfest.web.app/fingpt/)
-[![Android APK](https://img.shields.io/badge/Android%20APK-Download-blue)](./Frontend/public/financebuddy.apk)
+[![Android APK](https://img.shields.io/badge/Android%20APK-Download-blue)](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
 [![Tech Stack](https://img.shields.io/badge/Tech%20Stack-Next.js%20%7C%20Kotlin%20%7C%20AI-orange)](https://github.com/Omkar2k5/smart-finance-tracker)
 
 > **Revolutionary AI-Powered Financial Management Platform** - Transforming UPI transaction tracking and financial management through intelligent automation and cloud-based analytics.
@@ -168,11 +168,13 @@ Smart Finance Tracker provides a comprehensive cloud-based solution for automate
 *Comprehensive financial reporting system with detailed analytics, exportable data, and trend analysis*
 
 ### 📱 **Android Mobile Application**
-![Android App Interface](screenshots/andoridapp.png.jpg)
+<img src="screenshots/andoridapp.png.jpg" alt="Android App Interface" width="300"/>
+
 *Native Android application interface showcasing SMS parsing capabilities and mobile-optimized financial management*
 
 ### 🏠 **Android Home Screen**
-![Android Home](screenshots/andoridhomepage.png.jpg)
+<img src="screenshots/andoridhomepage.png.jpg" alt="Android Home Screen" width="300"/>
+
 *Android application home screen with quick access to financial data, transaction summaries, and key features*
 
 ---
@@ -183,7 +185,7 @@ Smart Finance Tracker provides a comprehensive cloud-based solution for automate
 **Live Demo:** [https://skn-hackfest.web.app/fingpt/](https://skn-hackfest.web.app/fingpt/)
 
 ### **📱 Android Application**
-**Direct Download:** [Download Android APK](./Frontend/public/financebuddy.apk)
+**Direct Download:** [Download Android APK](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
 
 ### **🚀 Getting Started**
 1. **Web Access:** Visit the live demo link above to explore all features
@@ -249,7 +251,7 @@ BINANCE_API_KEY=your_binance_key
 ```
 
 #### **For End Users**
-1. **Download APK:** [Download Android APK](./Frontend/public/financebuddy.apk)
+1. **Download APK:** [Download Android APK](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
 2. **Install:** Enable "Unknown Sources" and install APK
 3. **Permissions:** Grant SMS, Storage, and Camera permissions
 4. **Setup:** Sign in with Gmail account and start tracking transactions
