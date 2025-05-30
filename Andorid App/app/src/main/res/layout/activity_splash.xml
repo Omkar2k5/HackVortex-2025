@@ -20,7 +20,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_finance_logo"
+            android:src="@drawable/ic_finbuddy_logo"
             android:contentDescription="@string/app_name" />
 
         <!-- App Name -->
@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Smart Finance Tracking"
+            android:text="Smart FinBuddy Tracking"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:alpha="0.8" />

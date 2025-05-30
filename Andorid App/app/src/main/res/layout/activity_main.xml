@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/surface"
-            app:title="FinanceBuddy">
+            app:title="Smart FinBuddy">
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/serviceToggle"
@@ -60,7 +60,7 @@
                     <ImageView
                         android:layout_width="72dp"
                         android:layout_height="72dp"
-                        android:src="@drawable/finance_logo"
+                        android:src="@drawable/ic_finbuddy_logo"
                         android:contentDescription="@string/app_logo" />
 
                     <TextView
@@ -365,7 +365,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Hi, We are Team Deepship, a passionate  developers with expertise in modern web technologies. We created FinanceBuddy to help people manage their finances more effectively using the power of AI and intuitive design."
+                        android:text="Hi, We are Team Deepship, a passionate  developers with expertise in modern web technologies. We created Smart FinBuddy to help people manage their finances more effectively using the power of AI and intuitive design."
                         android:textColor="@color/text_secondary"
                         android:lineSpacingExtra="4dp" />
 
@@ -427,12 +427,26 @@
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
                     </LinearLayout>
 
+                    <!-- Web Application Link -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/webAppButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="🌐 Track on Web App"
+                        android:textAllCaps="false"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@color/accent"
+                        app:cornerRadius="12dp"
+                        style="@style/Widget.MaterialComponents.Button" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:layout_gravity="center"
-                        android:text="© 2024 FinanceBuddy. Built with ❤️ by Deepship"
+                        android:text="© 2024 Smart FinBuddy. Built with ❤️ by Deepship"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>

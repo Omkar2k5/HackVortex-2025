@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Smart Finance Tracker</string>
+    <string name="app_name">Smart FinBuddy</string>
     <string name="app_logo">App Logo</string>
     <!-- Auth strings -->
     <string name="error_invalid_email">Invalid email address</string>

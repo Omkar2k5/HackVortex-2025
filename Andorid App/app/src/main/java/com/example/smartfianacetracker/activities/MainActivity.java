@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             // Setup toolbar
             setSupportActionBar(binding.toolbar);
             if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle("FinanceBuddy");
+                getSupportActionBar().setTitle("Smart FinBuddy");
             }
 
             // Display user information
@@ -89,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
 
             // Initialize preferences and toggle
             setupPreferencesAndToggle();
+
+            // Setup web app button
+            setupWebAppButton();
 
             // Start entrance animations
             startEntranceAnimations();
@@ -337,6 +341,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setupWebAppButton() {
+        try {
+            findViewById(R.id.webAppButton).setOnClickListener(v -> {
+                try {
+                    // Open the web application link
+                    String webAppUrl = "https://skn-hackfest.web.app/home";
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webAppUrl));
+                    startActivity(intent);
+                    Toast.makeText(this, "Opening Smart FinBuddy Web App...", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Log.e(TAG, "Error opening web app", e);
+                    Toast.makeText(this, "Unable to open web app", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting up web app button", e);
+        }
+    }
+
     private boolean areAllPermissionsGranted() {
         for (String permission : requiredPermissions) {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -349,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
     private void showPermissionExplanationDialog() {
         new AlertDialog.Builder(this)
             .setTitle("Permissions Required")
-            .setMessage("This app needs SMS and notification permissions to monitor your financial transactions through SMS messages. Please grant these permissions to continue.")
+            .setMessage("Smart FinBuddy needs SMS and notification permissions to monitor your transactions through SMS messages. Please grant these permissions to continue.")
             .setPositiveButton("Grant Permissions", (dialog, which) -> requestPermissions())
             .setNegativeButton("Cancel", (dialog, which) ->
                 Toast.makeText(this, "App requires permissions to function properly", Toast.LENGTH_LONG).show())

@@ -16,7 +16,7 @@
             android:id="@+id/logoImage"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:src="@drawable/finance_logo"
+            android:src="@drawable/ic_finbuddy_logo"
             android:layout_marginTop="48dp"
             android:contentDescription="@string/app_logo" />
 
@@ -161,4 +161,4 @@
 
     </LinearLayout>
 
-</ScrollView> 
+</ScrollView>

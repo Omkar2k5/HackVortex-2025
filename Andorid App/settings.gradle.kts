@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Smart Fianace Tracker"
+rootProject.name = "Smart FinBuddy"
 include(":app")
