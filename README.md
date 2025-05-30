@@ -187,25 +187,33 @@ Smart Finance Tracker revolutionizes personal finance management through a compr
 
 ## 📸 Screenshots & Demo
 
-### 🏠 **Dashboard Overview**
+### 🏠 **Home Page & Landing**
+![Home Page](screenshots/home.png)
+*Modern landing page showcasing the Smart Finance Tracker platform with intuitive navigation and feature highlights*
+
+### 📊 **Dashboard Overview**
 ![Dashboard Overview](screenshots/Dashboard.png)
-*Comprehensive financial health dashboard with real-time metrics, spending trends, and AI-powered insights*
+*Comprehensive financial health dashboard with real-time metrics, spending trends, and AI-powered insights featuring interactive charts and financial summaries*
 
-### 💳 **Transaction Management**
-![Transaction Management](screenshots/Income Transaction Management.png)
-*Advanced transaction tracking with intelligent categorization, search, and filtering capabilities*
+### 💳 **Income & Transaction Management**
+![Transaction Management](screenshots/Income%20Transaction%20Management.png)
+*Advanced transaction tracking with intelligent categorization, income monitoring, and detailed financial analytics*
 
-### 📊 **Budget Tracking & Analytics**
+### 📈 **Budget Tracking & Analytics**
 ![Budget Analytics](screenshots/budget.png)
-*Interactive budget management with progress tracking, alerts, and optimization recommendations*
+*Interactive budget management interface with progress tracking, spending alerts, and optimization recommendations*
 
-### 📄 **AI Statement Processing**
-![Statement Import](screenshots/import.png)
-*Intelligent bank statement parsing with automated data extraction and validation*
+### 📋 **Financial Reports & Analytics**
+![Financial Reports](screenshots/reports.png)
+*Comprehensive financial reporting system with detailed analytics, exportable data, and trend analysis*
 
-### 📱 **Mobile Application**
-![Mobile App](screenshots/mobile-app.png)
-*Native Android application with SMS parsing, offline support, and seamless synchronization*
+### 📱 **Android Mobile Application**
+![Android App Interface](screenshots/andoridapp.png.jpg)
+*Native Android application interface showcasing SMS parsing capabilities and mobile-optimized financial management*
+
+### 🏠 **Android Home Screen**
+![Android Home](screenshots/andoridhomepage.png.jpg)
+*Android application home screen with quick access to financial data, transaction summaries, and key features*
 
 ---
 
