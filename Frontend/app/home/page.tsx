@@ -2,10 +2,11 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowRight, BarChart3, Brain, CreditCard, PiggyBank, TrendingUp, Download, Menu, X } from "lucide-react"
-import { FiHome, FiBarChart, FiCpu, FiUser } from "react-icons/fi"
-import { useState } from "react"
+import { ArrowRight, BarChart3, Brain, CreditCard, PiggyBank, TrendingUp, Download, Menu, X, FileText } from "lucide-react"
+import { FiHome, FiBarChart, FiCpu, FiUser, FiLogOut } from "react-icons/fi"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { onAuthStateChanged, logOut } from "@/lib/firebase-auth"
 
 // Simple Button component
 function Button({ children, onClick, className = "", variant = "default", size = "default", ...props }: any) {
@@ -67,11 +68,13 @@ function CardContent({ children, className = "", ...props }: any) {
 const NeumorphismButton = ({ children, onClick, icon: Icon, href, className = "" }: any) => {
   const router = useRouter();
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log('NeumorphismButton clicked:', { onClick: !!onClick, href });
+
     if (onClick) {
       onClick();
-    }
-    if (href && !onClick) {
+    } else if (href) {
       router.push(href);
     }
   };
@@ -87,6 +90,7 @@ const NeumorphismButton = ({ children, onClick, icon: Icon, href, className = ""
         transition-all
         hover:shadow-[-1px_-1px_5px_rgba(255,255,_255,_0.6),_1px_1px_5px_rgba(0,_0,_0,_0.3),inset-2px_-2px_5px_rgba(255,_255,_255,_1),inset_2px_2px_4px_rgba(0,_0,_0,_0.3)]
         hover:text-violet-500
+        cursor-pointer
         ${className}
       `}
     >
@@ -95,22 +99,44 @@ const NeumorphismButton = ({ children, onClick, icon: Icon, href, className = ""
     </button>
   );
 
-  // For navigation links without custom onClick, use Link component
-  if (href && !onClick) {
-    return (
-      <Link href={href}>
-        {buttonContent}
-      </Link>
-    );
-  }
-
-  // For buttons with custom onClick or no href
+  // Always return the button content directly for consistent behavior
   return buttonContent;
 };
 
 // Navigation Buttons Container
 const NeumorphismNavigation = () => {
   const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+      router.push('/home');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-4">
+        <div className="w-20 h-8 bg-gray-200 animate-pulse rounded-full" />
+        <div className="w-20 h-8 bg-gray-200 animate-pulse rounded-full" />
+        <div className="w-20 h-8 bg-gray-200 animate-pulse rounded-full" />
+        <div className="w-20 h-8 bg-gray-200 animate-pulse rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-4">
@@ -123,13 +149,23 @@ const NeumorphismNavigation = () => {
       <NeumorphismButton icon={FiCpu} href="/fingpt">
         FinGPT
       </NeumorphismButton>
-      <NeumorphismButton
-        icon={FiUser}
-        onClick={() => router.push('/login')}
-        className="bg-violet-50"
-      >
-        Sign In
-      </NeumorphismButton>
+      {user ? (
+        <NeumorphismButton
+          icon={FiLogOut}
+          onClick={handleSignOut}
+          className="bg-red-50"
+        >
+          Sign Out
+        </NeumorphismButton>
+      ) : (
+        <NeumorphismButton
+          icon={FiUser}
+          onClick={() => router.push('/login')}
+          className="bg-violet-50"
+        >
+          Sign In
+        </NeumorphismButton>
+      )}
     </div>
   );
 };
@@ -137,7 +173,28 @@ const NeumorphismNavigation = () => {
 // Navigation component with neumorphism buttons
 function NeumorphismNavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter()
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+      setIsMobileMenuOpen(false);
+      router.push('/home');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-slate-100/95 backdrop-blur supports-[backdrop-filter]:bg-slate-100/60">
@@ -149,7 +206,7 @@ function NeumorphismNavBar() {
             width={40}
             height={40}
             className="object-contain"
-            priority
+            priority={false}
           />
           <span className="text-xl font-bold text-gray-900">FinanceBuddy</span>
         </div>
@@ -207,16 +264,26 @@ function NeumorphismNavBar() {
             >
               FinGPT
             </NeumorphismButton>
-            <NeumorphismButton
-              icon={FiUser}
-              onClick={() => {
-                setIsMobileMenuOpen(false)
-                router.push('/login')
-              }}
-              className="w-full justify-center bg-violet-50"
-            >
-              Sign In
-            </NeumorphismButton>
+            {user ? (
+              <NeumorphismButton
+                icon={FiLogOut}
+                onClick={handleSignOut}
+                className="w-full justify-center bg-red-50"
+              >
+                Sign Out
+              </NeumorphismButton>
+            ) : (
+              <NeumorphismButton
+                icon={FiUser}
+                onClick={() => {
+                  setIsMobileMenuOpen(false)
+                  router.push('/login')
+                }}
+                className="w-full justify-center bg-violet-50"
+              >
+                Sign In
+              </NeumorphismButton>
+            )}
           </nav>
         </div>
       )}
@@ -233,17 +300,49 @@ function NeumorphismNavBar() {
   )
 }
 
-// Fallback component for 3D visualization
-function SplineViewer() {
+// Enhanced Financial Analytics component for HackVortex 2025
+function FinancialAnalyticsShowcase() {
   return (
-    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg">
-      <div className="text-center space-y-4">
-        <div className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
-          <TrendingUp className="h-12 w-12 text-white" />
+    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-100 rounded-2xl p-8">
+      <div className="text-center space-y-6 max-w-md">
+        {/* Money-related visual elements */}
+        <div className="relative">
+          <div className="w-32 h-32 mx-auto bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-2xl">
+            <div className="text-white text-4xl font-bold">₹</div>
+          </div>
+          {/* Floating money icons */}
+          <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce">
+            <span className="text-xs">💰</span>
+          </div>
+          <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center animate-pulse">
+            <span className="text-xs">💳</span>
+          </div>
+          <div className="absolute top-4 -left-4 w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center animate-ping">
+            <TrendingUp className="h-3 w-3 text-white" />
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl font-semibold text-gray-800">Financial Analytics</h3>
-          <p className="text-gray-600">Interactive 3D visualization</p>
+
+        <div className="space-y-3">
+          <h3 className="text-2xl font-bold text-gray-800">HackVortex 2025 Innovation</h3>
+          <p className="text-gray-600 text-sm leading-relaxed">
+            <span className="font-semibold text-emerald-600">Problem Statement:</span> Traditional financial management lacks AI-powered insights and real-time analytics for personal finance decisions.
+          </p>
+          <p className="text-gray-600 text-sm leading-relaxed">
+            <span className="font-semibold text-blue-600">Our Solution:</span> An intelligent financial companion with AI-driven insights, automated categorization, and predictive analytics.
+          </p>
+
+          {/* Innovation badges */}
+          <div className="flex flex-wrap gap-2 justify-center mt-4">
+            <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
+              ✨ AI-Powered
+            </span>
+            <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+              📊 Real-time Analytics
+            </span>
+            <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+              🚀 Scalable Solution
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -266,12 +365,25 @@ export default function HomePage() {
             <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8">
               {/* Content Container */}
               <div className="w-full max-w-2xl space-y-6 animate-fade-in z-10">
-                <div className="bg-white/50 backdrop-blur-sm p-4 md:p-8 rounded-2xl">
-                  <h1 className="text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold tracking-tighter text-gray-900">
+                <div className="bg-white/50 backdrop-blur-sm p-4 md:p-8 rounded-2xl relative overflow-hidden">
+                  {/* Money-related background elements */}
+                  <div className="absolute top-4 right-4 text-6xl opacity-10 animate-pulse">💰</div>
+                  <div className="absolute bottom-4 left-4 text-4xl opacity-10 animate-bounce">📊</div>
+                  <div className="absolute top-1/2 right-8 text-3xl opacity-10 animate-ping">💳</div>
+
+                  {/* HackVortex Badge */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full text-xs font-medium mb-4">
+                    🏆 HackVortex 2025 Submission
+                  </div>
+
+                  <h1 className="text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold tracking-tighter text-gray-900 relative z-10">
                     Smart Financial Management
+                    <span className="block text-2xl md:text-3xl lg:text-4xl xl:text-5xl bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mt-2">
+                      Powered by AI Innovation
+                    </span>
                   </h1>
-                  <p className="max-w-[600px] text-gray-700 text-base md:text-xl mt-4">
-                    Track expenses, manage budgets, and monitor your crypto portfolio with AI-powered insights
+                  <p className="max-w-[600px] text-gray-700 text-base md:text-xl mt-4 relative z-10">
+                    Revolutionary financial companion with AI-driven insights, automated categorization, and predictive analytics. Our HackVortex 2025 solution for smarter money management.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 pt-6">
                     <Button
@@ -302,14 +414,19 @@ export default function HomePage() {
               </div>
             </div>
             <div className="w-full md:w-1/2 h-[50vh] md:h-full relative">
-              <SplineViewer />
+              <FinancialAnalyticsShowcase />
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="w-full py-8 md:py-24 lg:py-32 bg-gray-50">
+      <section id="features" className="w-full py-8 md:py-24 lg:py-32 bg-gradient-to-br from-gray-50 via-blue-50 to-emerald-50 relative overflow-hidden">
+        {/* Background money elements */}
+        <div className="absolute top-10 left-10 text-8xl opacity-5 animate-pulse">💰</div>
+        <div className="absolute bottom-10 right-10 text-8xl opacity-5 animate-bounce">📈</div>
+        <div className="absolute top-1/2 left-1/4 text-6xl opacity-5 animate-ping">💳</div>
+        <div className="absolute top-1/4 right-1/4 text-6xl opacity-5 animate-pulse">🏦</div>
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
@@ -322,58 +439,180 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mx-auto grid max-w-5xl grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-12 mt-8 md:mt-12">
-            <Card className="border-gray-200 bg-white/50 backdrop-blur-sm shadow-lg rounded-2xl hover:scale-105 transition-transform duration-300">
-              <CardHeader className="pb-2">
-                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <CreditCard className="h-6 w-6 text-primary" />
+            <Link href="/expenses" className="group">
+              <Card className="border-gray-200 bg-white/50 backdrop-blur-sm shadow-lg rounded-2xl hover:scale-105 transition-all duration-300 cursor-pointer group-hover:shadow-xl group-hover:border-emerald-300">
+                <CardHeader className="pb-2">
+                  <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 group-hover:bg-emerald-200 transition-colors">
+                    <CreditCard className="h-6 w-6 text-emerald-600" />
+                  </div>
+                  <CardTitle className="text-base md:text-lg group-hover:text-emerald-700 transition-colors">Track Expenses</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xs md:text-sm text-gray-600 group-hover:text-gray-700">
+                    Smart expense tracking with automatic categorization and real-time updates. Monitor your spending patterns effortlessly.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/budgeting" className="group">
+              <Card className="border-gray-200 bg-white/50 backdrop-blur-sm shadow-lg rounded-2xl hover:scale-105 transition-all duration-300 cursor-pointer group-hover:shadow-xl group-hover:border-blue-300">
+                <CardHeader className="pb-2">
+                  <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 group-hover:bg-blue-200 transition-colors">
+                    <PiggyBank className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-base md:text-lg group-hover:text-blue-700 transition-colors">Smart Budgeting</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xs md:text-sm text-gray-600 group-hover:text-gray-700">
+                    Create custom budgets with intelligent alerts and insights. Stay on top of your financial goals with dynamic tracking.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/fingpt" className="group">
+              <Card className="border-gray-200 bg-white/50 backdrop-blur-sm shadow-lg rounded-2xl hover:scale-105 transition-all duration-300 cursor-pointer group-hover:shadow-xl group-hover:border-purple-300">
+                <CardHeader className="pb-2">
+                  <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 group-hover:bg-purple-200 transition-colors">
+                    <Brain className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <CardTitle className="text-base md:text-lg group-hover:text-purple-700 transition-colors">AI Insights</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xs md:text-sm text-gray-600 group-hover:text-gray-700">
+                    Get personalized financial advice and spending insights powered by advanced AI algorithms. Make smarter financial decisions.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/reports" className="group">
+              <Card className="border-gray-200 bg-white/50 backdrop-blur-sm shadow-lg rounded-2xl hover:scale-105 transition-all duration-300 cursor-pointer group-hover:shadow-xl group-hover:border-orange-300">
+                <CardHeader className="pb-2">
+                  <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 group-hover:bg-orange-200 transition-colors">
+                    <FileText className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <CardTitle className="text-base md:text-lg group-hover:text-orange-700 transition-colors">Financial Reports</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xs md:text-sm text-gray-600 group-hover:text-gray-700">
+                    Generate comprehensive financial reports with detailed analytics, charts, and insights. Export and share your financial data.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* HackVortex 2025 Innovation Challenge Section */}
+      <section className="w-full py-12 md:py-24 bg-gradient-to-br from-purple-50 via-blue-50 to-emerald-50">
+        <div className="container px-4 md:px-6">
+          <div className="text-center space-y-6 mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full text-sm font-medium">
+              🏆 HackVortex 2025 - Open Innovation Challenge
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tighter text-gray-900">
+              Solving Real-World Financial Problems
+            </h2>
+            <p className="max-w-3xl mx-auto text-gray-600 text-lg">
+              Our submission to HackVortex 2025's Open Innovation Round - identifying and solving critical challenges in personal financial management through AI-powered innovation.
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-12">
+            {/* Problem Identification */}
+            <Card className="border-2 border-red-200 bg-red-50/50 hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                  <span className="text-2xl">🎯</span>
                 </div>
-                <CardTitle className="text-base md:text-lg">Track Expenses</CardTitle>
+                <CardTitle className="text-red-800">Problem Statement</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs md:text-sm text-gray-600">
-                  Smart expense tracking with automatic categorization and real-time updates. Monitor your spending patterns effortlessly.
+                <p className="text-red-700 text-sm">
+                  Traditional financial management tools lack intelligent insights, real-time analytics, and personalized recommendations, leaving users struggling with manual tracking and poor financial decisions.
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-gray-200 bg-white/50 backdrop-blur-sm shadow-lg rounded-2xl hover:scale-105 transition-transform duration-300">
-              <CardHeader className="pb-2">
-                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <PiggyBank className="h-6 w-6 text-primary" />
+
+            {/* Innovation Approach */}
+            <Card className="border-2 border-blue-200 bg-blue-50/50 hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                  <span className="text-2xl">💡</span>
                 </div>
-                <CardTitle className="text-base md:text-lg">Smart Budgeting</CardTitle>
+                <CardTitle className="text-blue-800">Innovative Solution</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs md:text-sm text-gray-600">
-                  Create custom budgets with intelligent alerts and insights. Stay on top of your financial goals with dynamic tracking.
+                <p className="text-blue-700 text-sm">
+                  AI-powered financial companion with automated categorization, predictive analytics, comprehensive reporting, and intelligent budgeting recommendations for smarter financial decisions.
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-gray-200 bg-white/50 backdrop-blur-sm shadow-lg rounded-2xl hover:scale-105 transition-transform duration-300">
-              <CardHeader className="pb-2">
-                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Brain className="h-6 w-6 text-primary" />
+
+            {/* Impact & Scalability */}
+            <Card className="border-2 border-emerald-200 bg-emerald-50/50 hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
+                  <span className="text-2xl">🚀</span>
                 </div>
-                <CardTitle className="text-base md:text-lg">AI Insights</CardTitle>
+                <CardTitle className="text-emerald-800">Impact Potential</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs md:text-sm text-gray-600">
-                  Get personalized financial advice and spending insights powered by advanced AI algorithms. Make smarter financial decisions.
+                <p className="text-emerald-700 text-sm">
+                  Scalable solution targeting millions of users seeking better financial control, with potential for enterprise integration and global market expansion across emerging economies.
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-gray-200 bg-white/50 backdrop-blur-sm shadow-lg rounded-2xl hover:scale-105 transition-transform duration-300">
-              <CardHeader className="pb-2">
-                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <TrendingUp className="h-6 w-6 text-primary" />
+          </div>
+
+          {/* Innovation Highlights */}
+          <div className="bg-white rounded-2xl p-8 shadow-lg">
+            <h3 className="text-2xl font-bold text-center mb-8 text-gray-800">Why This Innovation Stands Out</h3>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-purple-600 text-sm">✨</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Originality</h4>
+                    <p className="text-gray-600 text-sm">Unique combination of AI insights, comprehensive reporting, and automated financial analysis in one platform</p>
+                  </div>
                 </div>
-                <CardTitle className="text-base md:text-lg">Crypto Portfolio</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs md:text-sm text-gray-600">
-                  Track your cryptocurrency investments in real-time. Monitor portfolio performance and get market insights.
-                </p>
-              </CardContent>
-            </Card>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-blue-600 text-sm">🧑‍💻</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Code Quality</h4>
+                    <p className="text-gray-600 text-sm">Built with Next.js 13, TypeScript, Firebase, and modern best practices for scalability and maintainability</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-emerald-600 text-sm">📈</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Scalability</h4>
+                    <p className="text-gray-600 text-sm">Cloud-native architecture with real-time database and API integrations for global scale</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-yellow-600 text-sm">🌍</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-800">Real-World Impact</h4>
+                    <p className="text-gray-600 text-sm">Addresses genuine financial literacy and management challenges faced by millions globally</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -421,11 +660,11 @@ export default function HomePage() {
                 </li>
                 <li className="flex items-start gap-4">
                   <div className="bg-primary/10 p-2 rounded-full">
-                    <TrendingUp className="h-5 w-5 text-primary" />
+                    <FileText className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">Investment Tracking</h3>
-                    <p className="text-gray-600">Real-time monitoring of your crypto investments and portfolio performance.</p>
+                    <h3 className="font-semibold">Comprehensive Reports</h3>
+                    <p className="text-gray-600">Generate detailed financial reports with charts, analytics, and exportable data for better decision making.</p>
                   </div>
                 </li>
               </ul>

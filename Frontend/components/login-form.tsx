@@ -21,7 +21,7 @@ export default function LoginForm() {
     // Check for existing session
     const unsubscribe = onAuthStateChanged((user) => {
       if (user) {
-        router.push("/home")
+        router.push("/dashboard")
       }
     })
 
@@ -43,7 +43,7 @@ export default function LoginForm() {
         if (rememberMe) {
           localStorage.setItem("rememberMe", "true")
         }
-        router.push("/home")
+        router.push("/dashboard")
       }
     } catch (err: any) {
       setError(err.message || "Failed to sign in")
@@ -65,7 +65,7 @@ export default function LoginForm() {
         if (rememberMe) {
           localStorage.setItem("rememberMe", "true")
         }
-        router.push("/home")
+        router.push("/dashboard")
       }
     } catch (err: any) {
       setError(err.message || "Failed to sign in with Google")
@@ -77,7 +77,7 @@ export default function LoginForm() {
   return (
     <>
       {error && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-red-900/50 border border-red-800 text-red-200 px-4 py-3 rounded-xl text-sm backdrop-blur-sm"
@@ -86,11 +86,11 @@ export default function LoginForm() {
         </motion.div>
       )}
 
-      <motion.form 
+      <motion.form
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        onSubmit={handleEmailSubmit} 
+        onSubmit={handleEmailSubmit}
         className="mt-8 space-y-6"
       >
         <div className="rounded-xl shadow-sm space-y-4">

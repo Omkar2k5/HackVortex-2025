@@ -20,6 +20,7 @@ import { database } from "@/lib/firebase"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "next/navigation"
 import { subMonths, startOfMonth, endOfMonth } from "date-fns"
+import { logOut } from "@/lib/firebase-auth"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -68,6 +69,7 @@ export default function DashboardPage() {
   const router = useRouter()
   const auth = getAuth()
   const [user, setUser] = useState(auth.currentUser)
+  const [isAuthLoading, setIsAuthLoading] = useState(true)
   const {
     loading: dataLoading,
     error: dataError,
@@ -95,6 +97,7 @@ export default function DashboardPage() {
   // Handle authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setIsAuthLoading(false)
       if (!currentUser) {
         router.push('/login')
         return
@@ -265,7 +268,17 @@ export default function DashboardPage() {
     refresh()
   }
 
-  if (loading || dataLoading) {
+  // Handle user logout
+  const handleLogout = async () => {
+    try {
+      await logOut()
+      router.push('/login')
+    } catch (error) {
+      console.error('Error logging out:', error)
+    }
+  }
+
+  if (isAuthLoading || loading || dataLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -292,7 +305,14 @@ export default function DashboardPage() {
       <div className="border-b">
         <div className="flex h-16 items-center px-4">
           <Link href="/home" className="flex items-center gap-2">
-            <IndianRupee className="h-6 w-6 text-primary" />
+            <Image
+              src="/images/finance-logo.png"
+              alt="FinanceBuddy Logo"
+              width={32}
+              height={32}
+              className="object-contain"
+              priority={false}
+            />
             <span className="text-xl font-bold">FinanceBuddy</span>
           </Link>
           <div className="ml-auto flex items-center gap-4">
@@ -300,9 +320,15 @@ export default function DashboardPage() {
               <LineChart className="h-5 w-5" />
               <span className="sr-only">Refresh</span>
             </Button>
-            <Button variant="ghost" size="sm" className="gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2 hover:bg-red-50 hover:text-red-600 transition-colors"
+              onClick={handleLogout}
+              title="Click to sign out"
+            >
               {user?.photoURL ? (
-                <img
+                <Image
                   src={user.photoURL}
                   width={32}
                   height={32}
