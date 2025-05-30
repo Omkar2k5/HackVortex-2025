@@ -517,7 +517,7 @@ export default function HomePage() {
               Solving Real-World Financial Problems
             </h2>
             <p className="max-w-3xl mx-auto text-gray-600 text-lg">
-              Our submission to HackVortex 2025's Open Innovation Round - identifying and solving critical challenges in personal financial management through AI-powered innovation.
+              Our submission to HackVortex 2025&apos;s Open Innovation Round - identifying and solving critical challenges in personal financial management through AI-powered innovation.
             </p>
           </div>
 
@@ -680,8 +680,8 @@ export default function HomePage() {
             <div className="space-y-4">
               <h3 className="text-lg md:text-xl font-bold">About the Developer</h3>
               <p className="text-sm md:text-base text-gray-600">
-                Hi, I'm Omkar Gondkar, a passionate full-stack developer with expertise in modern web technologies.
-                I created FinanceBuddy to help people manage their finances more effectively using the power of AI and intuitive design.
+                Hi, We are Deepship, a passionate full-stack developer with expertise in modern web technologies.
+                We created FinanceBuddy to help people manage their finances more effectively using the power of AI and intuitive design.
               </p>
               <div className="space-y-2">
                 <p className="text-sm md:text-base text-gray-600">📧 Email: gondkaromkar53@gmail.com</p>
@@ -715,7 +715,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="mt-8 pt-8 border-t text-center">
-            <p className="text-sm md:text-base text-gray-600">© 2024 FinanceBuddy. Built with ❤️ Omkar GOndkar</p>
+            <p className="text-sm md:text-base text-gray-600">© 2024 FinanceBuddy. Built with ❤️ by Deepship</p>
           </div>
         </div>
       </footer>

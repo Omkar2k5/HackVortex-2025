@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { IndianRupee, TrendingUp, ArrowUpRight, ArrowDownRight, RefreshCcw } from "lucide-react"
 import Image from "next/image"
 import { getDatabase, ref, get } from "firebase/database"
@@ -62,11 +62,11 @@ export default function PortfolioPage() {
     })
 
     return () => unsubscribe()
-  }, [auth, router])
+  }, [auth, router, fetchPortfolio])
 
   useEffect(() => {
     const updateTimeString = () => {
-      setLastUpdated(new Date().toLocaleTimeString('en-US', { 
+      setLastUpdated(new Date().toLocaleTimeString('en-US', {
         hour12: false,
         hour: '2-digit',
         minute: '2-digit',
@@ -78,10 +78,10 @@ export default function PortfolioPage() {
     return () => clearInterval(interval)
   }, [])
 
-  const fetchPortfolio = async () => {
+  const fetchPortfolio = useCallback(async () => {
     try {
       setIsLoading(true)
-      
+
       const response = await fetch('/api/portfolio', {
         method: 'GET',
         headers: {
@@ -111,8 +111,8 @@ export default function PortfolioPage() {
         .filter((balance: any) => parseFloat(balance.balance) > 0)
         .map((balance: any) => {
           // Find market data for this asset
-          const market = data.marketData.find((m: any) => 
-            m.symbol === `${balance.currency}USDT` || 
+          const market = data.marketData.find((m: any) =>
+            m.symbol === `${balance.currency}USDT` ||
             m.symbol === `${balance.currency}BUSD`
           )
 
@@ -143,7 +143,7 @@ export default function PortfolioPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user?.uid])
 
   const handleCredentialsSaved = () => {
     setHasCredentials(true)
@@ -328,4 +328,4 @@ export default function PortfolioPage() {
       </div>
     </div>
   )
-} 
+}

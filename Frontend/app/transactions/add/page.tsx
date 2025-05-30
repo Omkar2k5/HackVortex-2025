@@ -454,7 +454,7 @@ Income,Freelance,15000,UPI,1234567890"
                     <ul className="text-sm text-blue-800 space-y-1">
                       <li>• Each line represents one transaction</li>
                       <li>• Format: Type,Merchant,Amount,Mode,Account</li>
-                      <li>• Type: "Income" or "Expense"</li>
+                      <li>• Type: &quot;Income&quot; or &quot;Expense&quot;</li>
                       <li>• Amount: Numeric value (no currency symbols)</li>
                       <li>• Mode and Account are optional</li>
                     </ul>
