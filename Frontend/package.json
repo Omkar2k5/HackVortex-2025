@@ -14,7 +14,10 @@
     "type-check": "tsc --noEmit",
     "analyze": "node scripts/analyze-bundle.js",
     "perf:analyze": "npm run build && npm run analyze",
-    "firebase:deploy": "npm run build:export && firebase deploy"
+    "firebase:deploy": "npm run build:export && firebase deploy",
+    "deploy:firebase": "node scripts/firebase-deploy.js",
+    "clean:firebase": "node scripts/clean-for-firebase.js",
+    "deploy:clean": "npm run build && npm run clean:firebase && firebase deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

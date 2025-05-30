@@ -19,23 +19,5 @@ node_modules/
 *.rpm
 *.dmg
 *.msi
-
-# Exclude directories without extensions that Firebase treats as executables
-# These are Next.js route directories that don't have file extensions
-out/404
-out/budgeting
-out/dashboard
-out/expenses
-out/fingpt
-out/home
-out/income
-out/login
-out/manage
-out/portfolio
-out/reports
-out/signup
-out/transactions
-out/_next
-out/dashboard/update
-out/manage/import
-out/transactions/add
+*.so
+*.dll

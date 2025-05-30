@@ -192,10 +192,12 @@ Smart Finance Tracker provides a comprehensive cloud-based solution for automate
 ### **🚀 Getting Started**
 1. **Web Access:** Visit the live demo link above to explore all features
 2. **Android Setup:**
-   - Download the APK from the link above
-   - Install on your Android device
+   - Download the APK from the hosted link or repository
+   - Enable "Unknown Sources" in device settings
+   - Disable Google Play Protect temporarily for smooth installation
+   - Install the APK on your Android device
    - Sign in with the same Gmail account used on web
-   - Grant SMS permissions for automatic transaction logging
+   - Grant SMS, Storage, and Camera permissions for full functionality
 3. **UPI Transaction Tracking:** All your UPI transactions will be automatically tracked and logged in the cloud
 4. **Manual Entry:** For transactions without SMS, use the manual transaction entry feature
 5. **Bank Statement Import:** Upload bank statements for comprehensive financial history analysis
@@ -255,10 +257,25 @@ BINANCE_API_KEY=your_binance_key
 #### **For End Users**
 1. **Download APK:**
    - **From Website:** [Download from Hosted Link](https://skn-hackfest.web.app/home)
-   - **From Repository:** [Download from Android Build](https://github.com/Omkar2k5/HackVortex-2025/blob/main/Frontend/public/finbuddy.apk)
-2. **Install:** Enable "Unknown Sources" and install APK
-3. **Permissions:** Grant SMS, Storage, and Camera permissions
-4. **Setup:** Sign in with Gmail account and start tracking transactions
+   - **From Repository:** [Download from Android Build](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
+
+2. **Prepare Device for Installation:**
+   - **Enable Unknown Sources:** Go to Settings > Security > Enable "Unknown Sources" or "Install unknown apps"
+   - **Disable Google Play Protect (Recommended):**
+     - Open Google Play Store
+     - Tap on Profile icon (top right)
+     - Go to "Play Protect"
+     - Tap Settings gear icon
+     - Turn off "Scan apps with Play Protect"
+     - Confirm by tapping "Turn off"
+
+3. **Install APK:** Locate the downloaded APK file and tap to install
+4. **Permissions:** Grant required permissions when prompted:
+   - SMS permissions (for transaction parsing)
+   - Storage permissions (for data backup)
+   - Camera permissions (for document scanning)
+5. **Setup:** Sign in with Gmail account and start tracking transactions
+6. **Re-enable Play Protect (Optional):** After installation, you can re-enable Google Play Protect for security
 
 ### **🔧 Production Deployment**
 
