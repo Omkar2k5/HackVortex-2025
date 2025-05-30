@@ -173,8 +173,12 @@ export default function ReportsPage() {
         })
       }
 
-      setFilteredCredits(filteredCreditsData)
-      setFilteredDebits(filteredDebitsData)
+      // Convert to Transaction type with type property
+      const creditsWithType: Transaction[] = filteredCreditsData.map(tx => ({ ...tx, type: 'credit' as const }))
+      const debitsWithType: Transaction[] = filteredDebitsData.map(tx => ({ ...tx, type: 'debit' as const }))
+
+      setFilteredCredits(creditsWithType)
+      setFilteredDebits(debitsWithType)
 
       // Generate comprehensive report data
       const totalIncome = filteredCreditsData.reduce((sum, tx) => sum + tx.amount, 0)

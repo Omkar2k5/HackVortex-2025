@@ -9,13 +9,13 @@ import { useRouter } from "next/navigation"
 import { onAuthStateChanged, logOut } from "@/lib/firebase-auth"
 
 // Simple Button component
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
   variant?: "default" | "outline";
   size?: "default" | "lg";
-  [key: string]: any;
+}
 }
 
 function Button({ children, onClick, className = "", variant = "default", size = "default", ...props }: ButtonProps) {
@@ -23,11 +23,11 @@ function Button({ children, onClick, className = "", variant = "default", size =
   const variants = {
     default: "bg-primary text-primary-foreground hover:bg-primary/90",
     outline: "border border-input hover:bg-accent hover:text-accent-foreground"
-  }
+  } as const
   const sizes = {
     default: "h-10 py-2 px-4",
     lg: "h-11 px-8 rounded-md"
-  }
+  } as const
 
   return (
     <button
@@ -41,7 +41,12 @@ function Button({ children, onClick, className = "", variant = "default", size =
 }
 
 // Simple Card components
-function Card({ children, className = "", ...props }: any) {
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+function Card({ children, className = "", ...props }: CardProps) {
   return (
     <div className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`} {...props}>
       {children}
@@ -49,7 +54,7 @@ function Card({ children, className = "", ...props }: any) {
   )
 }
 
-function CardHeader({ children, className = "", ...props }: any) {
+function CardHeader({ children, className = "", ...props }: CardProps) {
   return (
     <div className={`flex flex-col space-y-1.5 p-6 ${className}`} {...props}>
       {children}
@@ -57,7 +62,7 @@ function CardHeader({ children, className = "", ...props }: any) {
   )
 }
 
-function CardTitle({ children, className = "", ...props }: any) {
+function CardTitle({ children, className = "", ...props }: CardProps) {
   return (
     <h3 className={`text-2xl font-semibold leading-none tracking-tight ${className}`} {...props}>
       {children}
@@ -65,7 +70,7 @@ function CardTitle({ children, className = "", ...props }: any) {
   )
 }
 
-function CardContent({ children, className = "", ...props }: any) {
+function CardContent({ children, className = "", ...props }: CardProps) {
   return (
     <div className={`p-6 pt-0 ${className}`} {...props}>
       {children}
@@ -74,7 +79,15 @@ function CardContent({ children, className = "", ...props }: any) {
 }
 
 // Neumorphism Button Component
-const NeumorphismButton = ({ children, onClick, icon: Icon, href, className = "" }: any) => {
+interface NeumorphismButtonProps {
+  children: React.ReactNode;
+  onClick?: () => void;
+  icon?: React.ComponentType<{ className?: string }>;
+  href?: string;
+  className?: string;
+}
+
+const NeumorphismButton = ({ children, onClick, icon: Icon, href, className = "" }: NeumorphismButtonProps) => {
   const router = useRouter();
 
   const handleClick = (e: React.MouseEvent) => {
