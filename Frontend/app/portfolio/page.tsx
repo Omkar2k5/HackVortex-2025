@@ -129,7 +129,7 @@ useEffect(() => {
   })
 
   return () => unsubscribe()
-}, [auth, router, checkCredentials, fetchPortfolio])
+}, [router, checkCredentials, fetchPortfolio])
 
   useEffect(() => {
     const updateTimeString = () => {
