@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { IndianRupee, Plus, Save, RotateCcw, Database, Upload } from "lucide-react"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
@@ -214,7 +215,7 @@ export default function AddTransactionPage() {
           <div className="ml-auto flex items-center gap-4">
             <Button variant="ghost" size="sm" className="gap-2">
               {user?.photoURL ? (
-                <img
+                <Image
                   src={user.photoURL}
                   width={32}
                   height={32}

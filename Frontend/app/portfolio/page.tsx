@@ -129,7 +129,7 @@ export default function PortfolioPage() {
     })
 
     return () => unsubscribe()
-  }, [auth, router, checkCredentials])
+  }, [auth, router, checkCredentials, fetchPortfolio])
 
   useEffect(() => {
     const updateTimeString = () => {
