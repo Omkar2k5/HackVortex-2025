@@ -15,8 +15,11 @@ public class SmartFinBuddyApp extends Application {
         
         // Initialize Google Sign In with web client ID
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("687898768842-016uetfn4soao9j866tbn1hg50d2dr1k.apps.googleusercontent.com")
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
+
+        // Initialize GoogleSignInClient to ensure proper configuration
+        GoogleSignIn.getClient(this, gso);
     }
 } 
