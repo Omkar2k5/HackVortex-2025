@@ -150,7 +150,7 @@ Smart Finance Tracker provides a comprehensive cloud-based solution for automate
 ## 📸 Screenshots & Demo
 
 ### 🏠 **Home Page & Landing**
-![Home Page](screenshots/h)
+![Home Page](screenshots/home.png)
 *Modern landing page showcasing the Smart Finance Tracker platform with intuitive navigation and feature highlights*
 
 ### 📊 **Dashboard Overview**
