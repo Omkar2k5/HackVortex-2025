@@ -1,8 +1,8 @@
-import { redirect } from 'next/navigation'
+// Import the HomePage component directly to avoid redirect loops
+import HomePage from './home/page'
 
-// Server-side redirect to home page for better SEO and performance
+// Serve the home page content directly at the root
 export default function RootPage() {
-  // This will be a server-side redirect, much faster than client-side
-  redirect('/home')
+  return <HomePage />
 }
 
