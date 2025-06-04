@@ -321,7 +321,7 @@ function NeumorphismNavBar() {
   )
 }
 
-// Enhanced Financial Analytics component for HackVortex 2025
+// Enhanced Financial Analytics component showcasing project quality
 function FinancialAnalyticsShowcase() {
   return (
     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-100 rounded-2xl p-8">
@@ -344,24 +344,24 @@ function FinancialAnalyticsShowcase() {
         </div>
 
         <div className="space-y-3">
-          <h3 className="text-2xl font-bold text-gray-800">HackVortex 2025 Innovation</h3>
+          <h3 className="text-2xl font-bold text-gray-800">ZenovateX2025</h3>
           <p className="text-gray-600 text-sm leading-relaxed">
-            <span className="font-semibold text-emerald-600">Problem Statement:</span> Traditional financial management lacks AI-powered insights and real-time analytics for personal finance decisions.
+            <span className="font-semibold text-emerald-600">Enterprise-Grade:</span> Built with modern architecture, scalable design patterns, and industry best practices for production-ready deployment.
           </p>
           <p className="text-gray-600 text-sm leading-relaxed">
-            <span className="font-semibold text-blue-600">Our Solution:</span> An intelligent financial companion with AI-driven insights, automated categorization, and predictive analytics.
+            <span className="font-semibold text-blue-600">Quality Assurance:</span> Comprehensive testing, optimized performance, secure authentication, and responsive design across all devices.
           </p>
 
-          {/* Innovation badges */}
+          {/* Quality badges */}
           <div className="flex flex-wrap gap-2 justify-center mt-4">
             <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
-              ✨ AI-Powered
+              ✨ Production Ready
             </span>
             <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-              📊 Real-time Analytics
+              � Secure & Tested
             </span>
             <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
-              🚀 Scalable Solution
+              🚀 High Performance
             </span>
           </div>
         </div>
@@ -392,19 +392,19 @@ export default function HomePage() {
                   <div className="absolute bottom-4 left-4 text-4xl opacity-10 animate-bounce">📊</div>
                   <div className="absolute top-1/2 right-8 text-3xl opacity-10 animate-ping">💳</div>
 
-                  {/* HackVortex Badge */}
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full text-xs font-medium mb-4">
-                    🏆 HackVortex 2025 Submission
+                  {/* Quality Badge */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-emerald-600 to-blue-600 text-white rounded-full text-xs font-medium mb-4">
+                    ⭐ ZenovateX2025
                   </div>
 
                   <h1 className="text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold tracking-tighter text-gray-900 relative z-10">
                     Smart Financial Management
                     <span className="block text-2xl md:text-3xl lg:text-4xl xl:text-5xl bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mt-2">
-                      Powered by AI Innovation
+                      Enterprise-Grade Solution
                     </span>
                   </h1>
                   <p className="max-w-[600px] text-gray-700 text-base md:text-xl mt-4 relative z-10">
-                    Revolutionary financial companion with AI-driven insights, automated categorization, and predictive analytics. Our HackVortex 2025 solution for smarter money management.
+                    Professional-grade financial companion built with modern technologies, featuring AI-driven insights, automated categorization, and comprehensive analytics for superior money management.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 pt-6">
                     <Button
@@ -522,80 +522,80 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* HackVortex 2025 Innovation Challenge Section */}
+      {/* Project Quality Excellence Section */}
       <section className="w-full py-12 md:py-24 bg-gradient-to-br from-purple-50 via-blue-50 to-emerald-50">
         <div className="container px-4 md:px-6">
           <div className="text-center space-y-6 mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full text-sm font-medium">
-              🏆 HackVortex 2025 - Open Innovation Challenge
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-blue-600 text-white rounded-full text-sm font-medium">
+              ⭐ ZenovateX2025
             </div>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tighter text-gray-900">
-              Solving Real-World Financial Problems
+              Enterprise-Grade Development Excellence
             </h2>
             <p className="max-w-3xl mx-auto text-gray-600 text-lg">
-              Our submission to HackVortex 2025&apos;s Open Innovation Round - identifying and solving critical challenges in personal financial management through AI-powered innovation.
+              Built with industry best practices, modern architecture, and rigorous quality standards to deliver a professional-grade financial management solution.
             </p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-12">
-            {/* Problem Identification */}
-            <Card className="border-2 border-red-200 bg-red-50/50 hover:shadow-lg transition-all duration-300">
-              <CardHeader>
-                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl">🎯</span>
-                </div>
-                <CardTitle className="text-red-800">Problem Statement</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-red-700 text-sm">
-                  Traditional financial management tools lack intelligent insights, real-time analytics, and personalized recommendations, leaving users struggling with manual tracking and poor financial decisions.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Innovation Approach */}
-            <Card className="border-2 border-blue-200 bg-blue-50/50 hover:shadow-lg transition-all duration-300">
-              <CardHeader>
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl">💡</span>
-                </div>
-                <CardTitle className="text-blue-800">Innovative Solution</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-blue-700 text-sm">
-                  AI-powered financial companion with automated categorization, predictive analytics, comprehensive reporting, and intelligent budgeting recommendations for smarter financial decisions.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Impact & Scalability */}
+            {/* Code Quality */}
             <Card className="border-2 border-emerald-200 bg-emerald-50/50 hover:shadow-lg transition-all duration-300">
               <CardHeader>
                 <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl">🚀</span>
+                  <span className="text-2xl">💻</span>
                 </div>
-                <CardTitle className="text-emerald-800">Impact Potential</CardTitle>
+                <CardTitle className="text-emerald-800">Code Excellence</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-emerald-700 text-sm">
-                  Scalable solution targeting millions of users seeking better financial control, with potential for enterprise integration and global market expansion across emerging economies.
+                  Clean, maintainable code following industry standards with TypeScript, modern React patterns, proper error handling, and comprehensive documentation for scalable development.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Architecture & Performance */}
+            <Card className="border-2 border-blue-200 bg-blue-50/50 hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                  <span className="text-2xl">🏗️</span>
+                </div>
+                <CardTitle className="text-blue-800">Modern Architecture</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-blue-700 text-sm">
+                  Built with Next.js 13 App Router, optimized performance, responsive design, efficient state management, and scalable component architecture for enterprise deployment.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Security & Testing */}
+            <Card className="border-2 border-purple-200 bg-purple-50/50 hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                  <span className="text-2xl">�</span>
+                </div>
+                <CardTitle className="text-purple-800">Security & Reliability</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-purple-700 text-sm">
+                  Firebase Authentication, secure data handling, input validation, error boundaries, comprehensive testing, and production-ready deployment configurations.
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Innovation Highlights */}
+          {/* Quality Highlights */}
           <div className="bg-white rounded-2xl p-8 shadow-lg">
-            <h3 className="text-2xl font-bold text-center mb-8 text-gray-800">Why This Innovation Stands Out</h3>
+            <h3 className="text-2xl font-bold text-center mb-8 text-gray-800">What Makes This Project Exceptional</h3>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-purple-600 text-sm">✨</span>
+                  <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-emerald-600 text-sm">⚡</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800">Originality</h4>
-                    <p className="text-gray-600 text-sm">Unique combination of AI insights, comprehensive reporting, and automated financial analysis in one platform</p>
+                    <h4 className="font-semibold text-gray-800">Performance Optimized</h4>
+                    <p className="text-gray-600 text-sm">Lightning-fast loading times, optimized bundle sizes, efficient rendering, and smooth user interactions across all devices</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -603,28 +603,28 @@ export default function HomePage() {
                     <span className="text-blue-600 text-sm">🧑‍💻</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800">Code Quality</h4>
-                    <p className="text-gray-600 text-sm">Built with Next.js 13, TypeScript, Firebase, and modern best practices for scalability and maintainability</p>
+                    <h4 className="font-semibold text-gray-800">Professional Development</h4>
+                    <p className="text-gray-600 text-sm">Built with Next.js 13, TypeScript, Firebase, and modern best practices following enterprise development standards</p>
                   </div>
                 </div>
               </div>
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-emerald-600 text-sm">📈</span>
+                  <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-purple-600 text-sm">�</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800">Scalability</h4>
-                    <p className="text-gray-600 text-sm">Cloud-native architecture with real-time database and API integrations for global scale</p>
+                    <h4 className="font-semibold text-gray-800">Production Ready</h4>
+                    <p className="text-gray-600 text-sm">Comprehensive error handling, secure authentication, responsive design, and deployment-ready configuration</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-yellow-600 text-sm">🌍</span>
+                  <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-orange-600 text-sm">�</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800">Real-World Impact</h4>
-                    <p className="text-gray-600 text-sm">Addresses genuine financial literacy and management challenges faced by millions globally</p>
+                    <h4 className="font-semibold text-gray-800">User-Centric Design</h4>
+                    <p className="text-gray-600 text-sm">Intuitive interface, accessibility compliance, mobile-first approach, and seamless user experience design</p>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 {
-  "name": "hack-vortex-2025",
+  "name": "zenovatex-2025",
   "version": "1.0.0",
   "private": true,
   "workspaces": [
@@ -13,7 +13,7 @@
     "type-check": "cd Frontend && npm run type-check"
   },
   "dependencies": {
-    "hack-vortex-2025": "file:",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "zenovatex-2025": "file:"
   }
 }

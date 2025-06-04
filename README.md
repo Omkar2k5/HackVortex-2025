@@ -1,9 +1,11 @@
 # Smart Finance Tracker 🚀
 
-## HackVortex 2025 - FinTech Innovation Challenge
+## ZenovateX 2025 - Domain 3: Product & Innovation
+### Solving Societal, Business & Lifestyle Problems
+**Category:** Personal Finance Apps - Smart budgeting, expense trackers, freelance income management tools
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen)](https://skn-hackfest.web.app/)
-[![Android APK](https://img.shields.io/badge/Android%20APK-Download-blue)](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
+[![Android APK](https://img.shields.io/badge/Android%20APK-Download-blue)](https://github.com/Omkar2k5/ZenovateX-2025/raw/main/Frontend/public/financebuddy.apk)
 [![Tech Stack](https://img.shields.io/badge/Tech%20Stack-Next.js%20%7C%20Kotlin%20%7C%20AI-orange)](https://github.com/Omkar2k5/smart-finance-tracker)
 
 > **Revolutionary AI-Powered Financial Management Platform** - Transforming UPI transaction tracking and financial management through intelligent automation and cloud-based analytics.
@@ -187,7 +189,7 @@ Smart Finance Tracker provides a comprehensive cloud-based solution for automate
 ### **📱 Android Application**
 **Download Options:**
 - **From Hosted Link:** [Download APK from Website](https://skn-hackfest.web.app/home)
-- **From Android Build:** [Download from Repository](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
+- **From Android Build:** [Download from Repository](https://github.com/Omkar2k5/ZenovateX-2025/raw/main/Frontend/public/financebuddy.apk)
 
 ### **🚀 Getting Started**
 1. **Web Access:** Visit the live demo link above to explore all features
@@ -215,8 +217,8 @@ In today's UPI-dominated world, automated logging of all transactions is crucial
 #### **Quick Start**
 ```bash
 # Clone the repository
-git clone https://github.com/Omkar2k5/smart-finance-tracker.git
-cd smart-finance-tracker/Frontend
+git clone https://github.com/Omkar2k5/ZenovateX-2025.git
+cd ZenovateX-2025/Frontend
 
 # Install dependencies
 npm install
@@ -257,7 +259,7 @@ BINANCE_API_KEY=your_binance_key
 #### **For End Users**
 1. **Download APK:**
    - **From Website:** [Download from Hosted Link](https://skn-hackfest.web.app/home)
-   - **From Repository:** [Download from Android Build](https://github.com/Omkar2k5/HackVortex-2025/raw/main/Frontend/public/financebuddy.apk)
+   - **From Repository:** [Download from Android Build](https://github.com/Omkar2k5/ZenovateX-2025/raw/main/Frontend/public/financebuddy.apk)
 
 2. **Prepare Device for Installation:**
    - **Enable Unknown Sources:** Go to Settings > Security > Enable "Unknown Sources" or "Install unknown apps"
@@ -327,7 +329,7 @@ npm run deploy
 ## 🙏 Acknowledgments
 
 ### **Special Thanks**
-- **HackVortex 2025** - For providing the platform to showcase innovation
+- **ZenovateX 2025** - For providing the platform to showcase innovation in Product & Innovation domain
 - **Open Source Community** - For the amazing tools and libraries
 - **Beta Testers** - For valuable feedback and bug reports
 - **Financial Advisors** - For domain expertise and guidance
@@ -340,6 +342,6 @@ npm run deploy
 
 ---
 
-*Built with ❤️ by [Deepship](https://github.com/Omkar2k5) for HackVortex 2025*
+*Built with ❤️ by Team DeepShip for ZenovateX 2025*
 
 **© 2025 Smart Finance Tracker. All rights reserved.**
