@@ -511,9 +511,10 @@ public class MainActivity extends AppCompatActivity {
             bounceIn.setStartOffset(300);
             findViewById(R.id.userInfoCard).startAnimation(bounceIn);
 
-            // Animate service toggle
+            // Animate service control card
             Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
             fadeIn.setStartOffset(600);
+            findViewById(R.id.serviceControlCard).startAnimation(fadeIn);
             serviceToggle.startAnimation(fadeIn);
 
         } catch (Exception e) {

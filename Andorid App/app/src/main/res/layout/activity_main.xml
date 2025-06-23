@@ -16,18 +16,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/surface"
             app:title="Smart FinBuddy">
-
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/serviceToggle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginEnd="16dp"
-                android:text="Service"
-                android:textColor="@color/white"
-                app:thumbTint="@color/primary"
-                app:trackTint="@color/primary_variant" />
-
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -149,6 +137,66 @@
                         android:src="@drawable/ic_security"
                         android:contentDescription="Service Status"
                         android:tint="@color/status_inactive" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            
+            <!-- Service Control Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/serviceControlCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/circle_background"
+                        android:src="@drawable/ic_sms"
+                        android:padding="12dp"
+                        android:contentDescription="SMS Service" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SMS Monitoring Service"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Enable to automatically track your financial SMS messages"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/serviceToggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:textColor="@color/white"
+                        app:thumbTint="@color/primary"
+                        app:trackTint="@color/primary_variant" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
